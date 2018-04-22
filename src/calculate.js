@@ -30,16 +30,13 @@ function compute(left, operand, right){
     }[operand];
 };
 
-function evaluate({ numbers, operands }){
-    return numbers.slice(1).reduce(
-        (left, right, i) => compute(left, operands[i], right)
-    , numbers[0]);
-};
-
 /**
  * 
  * @param {String} expression - The algebraic expression to calculate
  */
 export default function calculate(expression){
-    return evaluate(parse(expression));
+    const { numbers, operands } = parse(expression)
+    return numbers.slice(1).reduce(
+        (left, right, i) => compute(left, operands[i], right)
+    , numbers[0]);
 };
