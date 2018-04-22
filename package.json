@@ -1,0 +1,31 @@
+{
+  "name": "algebra",
+  "version": "0.0.0",
+  "description": "An algebraic expression calculator",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "babel src --out-dir lib",
+    "test": "babel-tape-runner 'test/**/*.test.js' | faucet",
+    "test:ugly": "babel-tape-runner 'test/**/*.test.js'",
+    "prepare": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thk2b/algebra.git"
+  },
+  "author": "thk2b",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thk2b/algebra/issues"
+  },
+  "homepage": "https://github.com/thk2b/algebra#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-tape-runner": "^2.0.1",
+    "faucet": "0.0.1",
+    "sinon": "^4.4.8",
+    "tape": "^4.9.0"
+  }
+}
