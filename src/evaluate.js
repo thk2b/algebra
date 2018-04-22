@@ -32,9 +32,9 @@ function compute(left, operand, right){
 
 /**
  * 
- * @param {String} expression - The algebraic expression to calculate
+ * @param {String} expression - The algebraic expression to evaluate
  */
-export default function calculate(expression){
+export default function evaluate(expression){
     const { numbers, operands } = parse(expression)
     return numbers.slice(1).reduce(
         (left, right, i) => compute(left, operands[i], right)
