@@ -1,6 +1,6 @@
 import test from 'tape';
 
-import calculate from '../src';
+import calculate from '../src/calculate';
 
 test('│calculate', main => {
     main.test('├ basic operations', t => {
@@ -20,14 +20,16 @@ test('│calculate', main => {
             t.equal(calculate('1 * 1'), 1, 'identity');
             t.equal(calculate('1 * 10'), 10);
             t.equal(calculate('2 * 11'), 22);
-            t.equal(calculate('1.54321 * 10'), 15.4321);
+            t.equal(calculate('1.54321 * 10'), 15.43210);
             t.end();
         });
         t.test('├─ with /', t => {
             t.equal(calculate('1 / 1'), 1, 'identity');
             t.equal(calculate('1 / 10'), 0.1);
             t.equal(calculate('147 / 7'), 21);
-            t.equal(calculate('1.54321 / 10'), 0.154321);
+            t.equal(calculate('1.54321 / 10'), 0.15432);
+            t.equal(calculate('10 / 1.54321'), 6.48000);
+            t.equal(calculate('2/3'), 0.667, 'should be rounded to 3 decimal places by default');
             t.end();
         });
         t.test('├─ with %', t => {
@@ -36,6 +38,10 @@ test('│calculate', main => {
             t.equal(calculate('123 % 12'), 3);
             t.equal(calculate('15.4321 % 4'), 3.4321);
             t.end();
+        });
+        t.test('├─ result should always be in the same precision as the most precise input', t => {
+            t.equal(calculate('1.11111 + 0'), 1.11111)
+            t.end()
         });
     });
     main.test('├ operations', t => {
