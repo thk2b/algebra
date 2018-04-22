@@ -56,8 +56,15 @@ test('│calculate', main => {
             t.equal(calculate('1.2345+2-3'), 0.2345, '1');
             t.equal(calculate('3*5/5'), 3, '2');
             t.equal(calculate('2*4+3.45'), 11.45, '3');
-            t.equal(calculate('12/2/1.5'), 4, '4');
             t.end();
+        });
+        t.test('├─ respects the order of operations', t => {
+            t.equal(calculate('1+2*4'), 13)
+            t.equal(calculate('10-(-2*4)'), 18)
+            t.equal(calculate('1+4/2'), 3)
+            t.equal(calculate('1-4/2'), -1)
+            t.equal(calculate('(1+5)*2', 12))
+            t.end()
         });
     });
 });
