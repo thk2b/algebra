@@ -26,8 +26,6 @@ function compute(left, operand, right){
         '-': round(left - right, max(precision(left), precision(right))),
         '*': round(left * right, max(precision(left), precision(right))),
         '/': round(left / right, max(options.precision, precision(left), precision(right))),
-        // '/': round(left / right, options.precision),
-        // '/': left / right,
         '%': round(left % right, max(precision(left), precision(right)))
     }[operand];
 };
