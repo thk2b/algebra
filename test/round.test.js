@@ -1,6 +1,6 @@
 import test from 'tape';
 
-import round from '../src/round';
+import round from '../src/util/round';
 
 test('│round', t => {
     t.equal(round(1, 0), 1, '1');

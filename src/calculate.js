@@ -1,5 +1,5 @@
-import round from './round';
-import precision from './precision';
+import round from './util/round';
+import precision from './util/precision';
 import options from './options';
 const { min, max } = Math;
 
