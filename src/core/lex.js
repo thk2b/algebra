@@ -1,11 +1,15 @@
 import Token, { _Number } from './token'
 
 function isDigit(char){
-    return /[\d\.]/.test(char)
+    return /[\d\.]/.test(char);
 }
 
 function isBinaryOperation(char){
-    return /[+\-*\//]/.test(char)
+    return /[+\-*\//]/.test(char);
+}
+
+function isParenthesis(char){
+    return /[\(\)]/.test(char)
 }
 
 /** 
@@ -54,6 +58,9 @@ export default function lex(expression){
                 ')': Token.CloseParenthesis
             }[char]());
             continue;
+        }
+        else {
+            throw new Error(`invalid character at position ${index}:${character}`);
         };
     };
     return tokens;
