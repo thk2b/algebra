@@ -1,10 +1,16 @@
 export default class Node {
     constructor(value, left, right){
         this.value = value;
-        this.left = left;
-        this.right = right;
+        this.left = left && this._validate(left);
+        this.right = right && this._validate(right);
         return this;
     };
+    _validate(node){
+        if(node instanceof Node){
+            return node
+        }
+        throw new TypeError(`Invalid Node: ${node}`)
+    }
     get count(){
         return [this.right, this.left].reduce(
             (count, child) => child === undefined ? count : count + 1
@@ -16,45 +22,34 @@ export default class Node {
     };
     add(node){
         if(this.left === undefined){
-            this.left = node;
+            this.left = this._validate(node);
         } else if (this.right === undefined){
-            this.left = node;
+            this.right = this._validate(node);
         } else {
             throw new Error('A node cannot have more than two children.');
         };
         return this;
     };
-    addLeaf(node){
-        for(let node of this.nodes()){
-            if(node.left !== undefined && node.right === undefined){
-                return node;
-            };
-        };
-        return this.add(node);
-    };
     insertRight(node){
-        node.add(this.right);
+        this._validate(node).add(this.right);
         this.right = node;
         return node;
     };
     insertLeft(node){
-        node.add(this.left);
+        this._validate(node).add(this.left);
         this.left = node;
         return node;
     };
-    *nodes(){
-
-    }
-    *[Symbol.iterator](){
+    *walk(){
+        yield this.value;
         if(this.left !== undefined){
             yield *this.left;
-            yield this.left;
         };
         if(this.right !== undefined){
-            if(this.right instanceof Node){
-                yield *this.right;
-            };
-            yield this.right;
+            yield *this.right;
         };
+    }
+    *[Symbol.iterator](){
+        yield* this.walk();
     };
 };
