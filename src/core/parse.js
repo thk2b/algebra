@@ -5,7 +5,6 @@ const precedence = {
     '+': 0, '-': 0, '*': 1, '/': 1
 }
 
-
 /**
  * Transforms tokens into a syntax tree.
  * Algorithm:
