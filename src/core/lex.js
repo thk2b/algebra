@@ -1,9 +1,4 @@
-import {
-    _Number,
-    BinaryOperator,
-    OpenParenthesis,
-    CloseParenthesis,
-} from './tokens'
+import Token from './token'
 export default function lex(expression){
-    
+
 };

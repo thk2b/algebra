@@ -1,15 +1,4 @@
-import {
-    NUMBER,
-    BINARY_OPERATION,
-    OPEN_PARENTHESIS,
-    CLOSE_PARENTHESIS,
-} from './lex'
-import {
-    _Number,
-    BinaryOperator,
-    OpenParenthesis,
-    CloseParenthesis,
-} from './tokens'
+import Token from './token'
 import Node from './Node';
 
 const precedence = {
@@ -50,13 +39,13 @@ function parse(tokens){
     let leaf = root;
 
     for(let [index, token] of tokens.slice(1).entries()){    
-        if(token instanceof _Number){            
+        if(token instanceof Token._Number){            
             leaf.add(new Node(token));
             leaf = root;
             continue;
         }
-        else if(token instanceof BinaryOperator){
-            if(root.value.type === BINARY_OPERATION && precedence[token.operator] > precedence[root.value.operator]){
+        else if(token instanceof Token.BinaryOperator){
+            if(root.value.type === BINARY_OPERATION && token.precendece > root.value.precedence){
                 // high precedence: we keep the same root, and insert the operator below it.
                 const node = root.insertRight(Node(token));
                 leaf = node;
@@ -67,7 +56,7 @@ function parse(tokens){
                 continue;
             };
         }
-        else if(token instanceof OpenParenthesis){
+        else if(token instanceof Token.OpenParenthesis){
             /*
             ** Create a subtree with the tokens from here to the closing parens.
             ** Remove all the tokens from the list, since we have parsed them already.
@@ -75,7 +64,7 @@ function parse(tokens){
             ** Attach the subtree to the leaf.
             */
             const closingParenthesisIndex = tokens.findIndex(
-                t => t instanceof CloseParenthesis
+                t => t instanceof Token.CloseParenthesis
             )
             if(closingParenthesisIndex === -1){
                 throw new Error('unmatched parenthesis');
