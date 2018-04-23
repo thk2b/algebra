@@ -2,7 +2,7 @@ import test from 'tape';
 
 import calculate from '../src/calculate';
 
-test('calculate', main => {
+test('core/calculate', main => {
     main.fail('not implemented')
     main.end()
     // main.test('├ basic operations', t => {
