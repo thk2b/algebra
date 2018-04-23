@@ -50,12 +50,12 @@ function parse(tokens){
     let leaf = root;
 
     for(let [index, token] of tokens.slice(1).entries()){    
-        if(token.type === NUMBER){            
+        if(token instanceof _Number){            
             leaf.add(new Node(token));
             leaf = root;
             continue;
         }
-        else if(token.type === BINARY_OPERATION){
+        else if(token instanceof BinaryOperator){
             if(root.value.type === BINARY_OPERATION && precedence[token.operator] > precedence[root.value.operator]){
                 // high precedence: we keep the same root, and insert the operator below it.
                 const node = root.insertRight(Node(token));
@@ -67,7 +67,7 @@ function parse(tokens){
                 continue;
             };
         }
-        else if(token.type === OPEN_PARENTHESIS) {
+        else if(token instanceof OpenParenthesis){
             /*
             ** Create a subtree with the tokens from here to the closing parens.
             ** Remove all the tokens from the list, since we have parsed them already.
@@ -75,7 +75,7 @@ function parse(tokens){
             ** Attach the subtree to the leaf.
             */
             const closingParenthesisIndex = tokens.findIndex(
-                t => t.type === CLOSE_PARENTHESIS
+                t => t instanceof CloseParenthesis
             )
             if(closingParenthesisIndex === -1){
                 throw new Error('unmatched parenthesis');
