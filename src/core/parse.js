@@ -21,11 +21,11 @@ const precedence = {
  * For each token:
  *   If the token is a number, add it to the leaf. The root stays the leaf.
  *   If the token is a binary operation:
- *     If it has high precedence (multiplication or division), 
+ *     If the root is an operator, and has lower precedence than the operator,
  *     insert the operator between the root and its right child.
  *     The new node becomes the leaf.
- *     If it has low precedence (addition or substraction),
- *     the operator becomes the root. Attatch the previous root to the new root.
+ *     Otherwise, the operator becomes the root.
+ *     Attatch the previous root to the new root.
  *     The new root becomes the leaf.
  * @param {*} tokens – lexer tokens
  */
@@ -42,10 +42,7 @@ function parse(tokens){
             continue;
         }
         else if(token.type === BINARY_OPERATION){
-            if(root.count !== 1){
-                throw new Error('binary operators require two nodes')
-            };
-            if(precedence[token.operator]){
+            if(root.value.type === BINARY_OPERATION && precedence[token.operator] > precedence[root.value.operator]){
                 // high precedence: we keep the same root, and insert the operator below it.
                 const node = root.insertRight(Node(token));
                 leaf = node;
@@ -56,6 +53,9 @@ function parse(tokens){
                 continue;
             };
         };
+    }
+    if( root !== leaf){
+        throw new Error('incomplete expression')
     }
     return root;
 }
