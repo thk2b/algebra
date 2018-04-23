@@ -29,9 +29,11 @@ function _calculate(node){
 }
 /**
  * 
- * @param {String} expression - The algebraic expression to calculate
+ * @param {String} expression - The algebraic expression to evaluate
  */
+
 export default function calculate(expression){
     const root = parse(lex(expression))
     return _calculate(root)
+
 };
