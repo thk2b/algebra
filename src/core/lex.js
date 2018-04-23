@@ -1,4 +1,4 @@
-import Token, { _Number } from './token'
+import Token from './Token'
 
 function isDigit(char){
     return /[\d\.]/.test(char);
@@ -10,6 +10,11 @@ function isBinaryOperation(char){
 
 function isParenthesis(char){
     return /[\(\)]/.test(char)
+}
+
+function tokenizeDigits(digits){
+    const rawNumber = digits.splice(0, digits.length).join('');
+    return new Token._Number(Number.parseFloat(rawNumber));
 }
 
 /** 
@@ -34,13 +39,12 @@ function isParenthesis(char){
 export default function lex(expression){
     const digits = [];
     const tokens = [];
-    for(let [index, char] of expression.split().entries()){
+    for(let [index, char] of expression.split('').entries()){
         if(isDigit(char)){
             digits.push(char);
             continue;
         } else if(digits.length){
-            const rawNumber = digits.splice(0, digits.length).join('');
-            tokens.push(new Token._Number(Number.parseFloat(rawNumber)));
+            tokens.push(tokenizeDigits(digits));
         };
         
         if(isBinaryOperation(char)){
@@ -62,6 +66,9 @@ export default function lex(expression){
         else {
             throw new Error(`invalid character at position ${index}:${character}`);
         };
+    };
+    if(digits.length){
+        tokens.push(tokenizeDigits(digits));
     };
     return tokens;
 };

@@ -28,6 +28,7 @@ export class CloseParenthesis { };
 
 export default {
     _Number,
+    BinaryOperation,
     Addition, Substraction, Division, Multiplication,
     OpenParenthesis, CloseParenthesis,
 }
