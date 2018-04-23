@@ -4,6 +4,12 @@ import {
     OPEN_PARENTHESIS,
     CLOSE_PARENTHESIS,
 } from './lex'
+import {
+    _Number,
+    BinaryOperator,
+    OpenParenthesis,
+    CloseParenthesis,
+} from './tokens'
 import Node from './Node';
 
 const precedence = {
