@@ -1,6 +1,6 @@
 import test from 'tape';
 
-import Node from '../src/util/Node';
+import Node from '../src/core/Node';
 
 test('Node', main => {
     main.test('├ constructor', t => {

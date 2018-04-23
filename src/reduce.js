@@ -1,9 +1,24 @@
-import { BinaryOperation } from './core/tokens';
+import { Division, _Number } from './core/token';
+import Node from './core/Node';
 
 /**
- * 
- * @param {Token.Division} division –
+ * Returns a Node containing a Token.Division in lowest terms.
+ * @param {Node} division – A division node containing a token to reduce to lowest terms.
  */
-export default function reduce(division){
+export default function reduce(divisionNode){
+    if(!divisionNode instanceof Node){
+        throw new Error('cannot reduce a non-Node');
+    };
+    const division = divisionNode.value;
+    if(!division instanceof Division){
+        throw new Error('cannot reduce a non-Division');
+    };
 
-}
+    const { left, right } = divisionNode;
+    const numerator = divisionNode.left.value;
+    const denominator = divisionNode.left.value;
+    const divisor = gcd(numerator, denominator);
+    left.set(left.value / divisor);
+    right.set(right.value / divisor);
+    return divisionNode
+};
