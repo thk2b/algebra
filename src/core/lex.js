@@ -39,7 +39,7 @@ export default function lex(expression){
             digits.push(char);
             continue;
         } else if(digits.length){
-            const rawNumber = digits.splice(0, digits.length).join(''));
+            const rawNumber = digits.splice(0, digits.length).join('');
             tokens.push(new Token._Number(Number.parseFloat(rawNumber)));
         };
         
