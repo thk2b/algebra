@@ -2,7 +2,7 @@ import test from 'tape';
 
 import round from '../src/util/round';
 
-test('│round', t => {
+test('round', t => {
     t.equal(round(1, 0), 1, '1');
     t.equal(round(1, 2), 1, '2');
     t.equal(round(1.9, 0), 2, '2.1');

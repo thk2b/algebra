@@ -2,7 +2,7 @@ import test from 'tape';
 
 import Node from '../src/util/Node';
 
-test('│Node', main => {
+test('Node', main => {
     main.test('├ constructor', t => {
         t.test('├─ with no child nodes', t => {
             const n = new Node(1)

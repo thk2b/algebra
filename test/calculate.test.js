@@ -2,7 +2,7 @@ import test from 'tape';
 
 import calculate from '../src/calculate';
 
-test('│calculate', main => {
+test('calculate', main => {
     main.test('├ basic operations', t => {
         t.test('├─ with +', t => {
             t.equal(calculate('1 + 1'), 2, 'identity');
