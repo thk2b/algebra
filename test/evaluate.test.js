@@ -40,8 +40,8 @@ test('│evaluate', main => {
             t.end();
         });
         t.test('├─ result should always be in the same precision as the most precise input', t => {
-            t.equal(evaluate('1.11111 + 0'), 1.11111)
-            t.end()
+            t.equal(evaluate('1.11111 + 0'), 1.11111);
+            t.end();
         });
     });
     main.test('├ operations', t => {
@@ -59,12 +59,12 @@ test('│evaluate', main => {
             t.end();
         });
         t.test('├─ respects the order of operations', t => {
-            t.equal(evaluate('1+2*4'), 13)
-            t.equal(evaluate('10-(-2*4)'), 18)
-            t.equal(evaluate('1+4/2'), 3)
-            t.equal(evaluate('1-4/2'), -1)
-            t.equal(evaluate('(1+5)*2', 12))
-            t.end()
+            t.equal(evaluate('1+2*4'), 13);
+            t.equal(evaluate('10-(-2*4)'), 18);
+            t.equal(evaluate('1+4/2'), 3);
+            t.equal(evaluate('1-4/2'), -1);
+            t.equal(evaluate('(1+5)*2', 12));
+            t.end();
         });
     });
 });
