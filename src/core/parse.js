@@ -17,11 +17,11 @@ const precedence = {
  *   If the token is a number, add it to the leaf. The root stays the leaf.
  *   If the token is a binary operation:
  *     If the root is an operator, and has lower precedence than the operator,
- *     insert the operator between the root and its right child.
- *     The new node becomes the leaf.
+ *       insert the operator between the root and its right child.
+ *       The new node becomes the leaf.
  *     Otherwise, the operator becomes the root.
- *     Attatch the previous root to the new root.
- *     The new root becomes the leaf.
+ *       Attatch the previous root to the new root.
+ *       The new root becomes the leaf.
  *   If the token is an open parenthesis:
  *     Create a subtree with all the tokens from the next token to the closing parenthesis.
  *     Remove the subexpression tokens from the tokens.

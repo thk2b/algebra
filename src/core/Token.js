@@ -3,6 +3,7 @@ export class _Number {
         this.value = value;
     };
 };
+
 export class BinaryOperation {
     constructor(operator, precedence){
         this.operator = operator;
