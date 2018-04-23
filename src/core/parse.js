@@ -27,15 +27,23 @@ const precedence = {
  *     Otherwise, the operator becomes the root.
  *     Attatch the previous root to the new root.
  *     The new root becomes the leaf.
+ *   If the token is an open parenthesis:
+ *     Create a subtree with all the tokens from the next token to the closing parenthesis.
+ *     Remove the subexpression tokens from the tokens.
+ *     Attatch the subtree to the leaf.
+ *     The root becomes the leaf.
  * @param {*} tokens – lexer tokens
  */
 
 function parse(tokens){
+    if(tokens.length === 0){
+        throw new Error('empty expresison');
+    };
+
     let root = new Node(tokens[0]);
-    /* the tree is a complete tree, so there is always at most one temporary leaf */
     let leaf = root;
 
-    for(let token of tokens.slice(1)){    
+    for(let [index, token] of tokens.slice(1).entries()){    
         if(token.type === NUMBER){            
             leaf.add(new Node(token));
             leaf = root;
@@ -52,9 +60,36 @@ function parse(tokens){
                 leaf = root;
                 continue;
             };
+        }
+        else if(token.type === OPEN_PARENTHESIS) {
+            /*
+            ** Create a subtree with the tokens from here to the closing parens.
+            ** Remove all the tokens from the list, since we have parsed them already.
+            ** Remove the closing parens.
+            ** Attach the subtree to the leaf.
+            */
+            const closingParenthesisIndex = tokens.findIndex(
+                t => t.type === CLOSE_PARENTHESIS
+            )
+            if(closingParenthesisIndex === -1){
+                throw new Error('unmatched parenthesis');
+            };
+            const subtreeStartIndex = index + 1
+            const subtreeLength = closingParenthesisIndex - subtreeStartIndex
+            const subExpressionTokens = tokens.splice(index + 1, subtreeLength).slice(0, -1);
+            if(subExpressionTokens.length === 0){
+                throw new Error('empty expression');
+            };
+            const subtree = parse(subExpressionTokens);
+            leaf.add(subtree);
+            leaf = root;
+            continue;
+        }
+        else {
+            throw new Error('invalid token')
         };
     }
-    if( root !== leaf){
+    if(root !== leaf){
         throw new Error('incomplete expression')
     }
     return root;
