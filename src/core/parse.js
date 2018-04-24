@@ -36,11 +36,12 @@ function findCloseParensIndex(tokens, openParensIndex){
  *       The new root becomes the leaf.
  *   If the token is an open parenthesis:
  *     Create a subtree with all the tokens from the next token to the closing parenthesis.
- *     Remove the subexpression tokens from the tokens.
+ *     If the subtree root is an operation, it has high precedence.
  *     If the leaf does not exist, the subtree becomes the root.    
  *     Otherwise,    
  *       Attatch the subtree to the leaf.
  *       The root becomes the leaf.
+ *     Check the token that immediately follows the closing parenthesis.
  * @param {*} tokens – lexer tokens
  */
 
