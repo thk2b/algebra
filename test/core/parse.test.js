@@ -17,14 +17,14 @@ test('core/parse', main => {
     main.test('├ negative number', t => {
         const tokens = lex('-1');
         const root = parse(tokens);
-        const walk = Arary.from(root);
+        const walk = Array.from(root);
         t.deepEqual(walk, [
             { operator: '*', precedence: 1 },
             { value: -1 },
             { value: 1 },
         ])
         t.ok(root instanceof Node);
-        t.ok(root.value instanceof Token._Number);
+        t.ok(root.value instanceof Token.Multiplication);
         t.end();
     });
 

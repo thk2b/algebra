@@ -35,9 +35,9 @@ test('core/lex', main => {
             t.test('├── negative number', t => {
                 const tokens = lex('-1234.5678');
                 t.equal(tokens.length, 3, 'should lex 3 tokens');
-                t.ok(tokens[0] instanceof Token.Multiplication, '0 should be a Multiplication');
-                t.ok(tokens[1] instanceof Token._Number, '1 should be a _Number');
-                t.equal(tokens[1].value, -1);
+                t.ok(tokens[0] instanceof Token._Number, '0 should be a _Number');
+                t.equal(tokens[0].value, -1);
+                t.ok(tokens[1] instanceof Token.Multiplication, '1 should be a Multiplication');
                 t.ok(tokens[2] instanceof Token._Number, '2 should be a _Number');
                 t.equal(tokens[2].value, 1234.5678);
                 t.end();
@@ -54,22 +54,67 @@ test('core/lex', main => {
                 t.end();
             });
             t.test('├── -', t => {
-                const [ token ] = lex('-');
-                t.ok(token);
-                t.ok(token instanceof Token.BinaryOperation, 'should be a BinaryOperation');
-                t.ok(token instanceof Token.Substraction, 'should be an Substraction');
-                t.equal(token.operator, '-');
-                t.equal(token.precedence, 0, 'should have the correct precedence');
-                t.end();
+                t.test('├─── operator', t => {
+                    const [ x, token, y ] = lex('1-2');
+                    t.ok(token);
+                    t.ok(token instanceof Token.BinaryOperation, 'should be a BinaryOperation');
+                    t.ok(token instanceof Token.Substraction, 'should be an Substraction');
+                    t.equal(token.operator, '-');
+                    t.equal(token.precedence, 0, 'should have the correct precedence');
+                    t.end();
+                });
+                t.test('├─── interpreted as a multiplication by -1 when at the start of expression', t => {
+                    const tokens = lex('-1');
+                    t.equal(tokens.length, 3, 'should lex 3 tokens');
+                    t.ok(tokens[0] instanceof Token._Number, '0 should be a _Number');
+                    t.equal(tokens[0].value, -1);
+                    t.ok(tokens[1] instanceof Token.Multiplication, '1 should be a Multiplication');
+                    t.ok(tokens[2] instanceof Token._Number, '2 should be a _Number');
+                    t.equal(tokens[2].value, 1);
+                    t.end();
+                });
+                t.test('├─── interpreted as a multiplication by -1 following another operator', t => {
+                    const tokens = lex('1+-2');
+                    t.equal(tokens.length, 5, 'should find 5 tokens');
+                    t.deepEqual(tokens, [
+                        { value: 1}, { operator: '+', precedence: 0 },
+                        { value: -1 }, { operator: '*', precedence: 1 },
+                        { value: 2 }
+                    ])
+                    t.end();
+                });
+                t.test('├─── interpreted as a multiplication by -1 following an open parenthesis', t => {
+                    const tokens = lex('0*(-1+2)');
+                    t.equal(tokens.length, 9, 'should find 9 tokens');
+                    t.deepEqual(tokens, [
+                        { value: 0}, { operator: '*', precedence: 1 },
+                        {}, 
+                        { value: -1 }, { operator: '*', precedence: 1 }, { value: 1 },
+                        { operator: '+', precedence: 0 }, { value: 2 },
+                        {}
+                    ])
+                    t.end();
+                });
             });
             t.test('├── *', t => {
-                const [ token ] = lex('*');
-                t.ok(token);
-                t.ok(token instanceof Token.BinaryOperation, 'should be a BinaryOperation');
-                t.ok(token instanceof Token.Multiplication, 'should be a Multiplication');
-                t.equal(token.operator, '*');
-                t.equal(token.precedence, 1, 'should have the correct precedence');
-                t.end();
+                t.test('├─── operator', t => {
+                    const [ token ] = lex('*');
+                    t.ok(token);
+                    t.ok(token instanceof Token.BinaryOperation, 'should be a BinaryOperation');
+                    t.ok(token instanceof Token.Multiplication, 'should be a Multiplication');
+                    t.equal(token.operator, '*');
+                    t.equal(token.precedence, 1, 'should have the correct precedence');
+                    t.end();
+                })
+                t.test('├─── implicit multiplication', t => {
+                    const tokens = lex('1(2 + 3)');
+                    t.equal(tokens.length, 7, 'should add a Multiplication token');
+                    t.ok(tokens[0] instanceof Token._Number, '0 should be a _Number');
+                    t.ok(tokens[1] instanceof Token.Multiplication, '1 should be a Multiplication');
+                    t.ok(tokens[2] instanceof Token.OpenParenthesis, '2 should be an OpenParenthesis');
+                    t.ok(tokens[-1] instanceof Token.CloseParenthesis, 'last token should be an CloseParenthesis');
+                    t.end();
+                });
             });
             t.test('├── /', t => {
                 const [ token ] = lex('/');
@@ -95,15 +140,6 @@ test('core/lex', main => {
                 t.end();
             });
         });
-        t.test('├── implicit multiplication', t => {
-            const tokens = lex('1(2 + 3)');
-            t.equal(tokens.length === 6, 'should add a Multiplication token')
-            t.ok(tokens[0] instanceof Token._Number, '0 should be a _Number');
-            t.ok(tokens[1] instanceof Token.Multiplication, '1 should be a Multiplication');
-            t.ok(tokens[2] instanceof Token.OpenParenthesis, '2 should be an OpenParenthesis');
-            t.ok(tokens[-1] instanceof Token.CloseParenthesis, 'last token should be an CloseParenthesis');
-            t.end();
-        });
         t.test('├─ invalid token', t => {
             t.throws(
                 () => lex('@')
@@ -113,6 +149,7 @@ test('core/lex', main => {
     });
     main.test('├ full expression ', t => {
         const tokens = lex('1+22*33.33/444.444');
+        t.equal(tokens.length, 7, 'should find 7 tokens');
         t.ok(tokens[0] instanceof Token._Number, '0 is a _Number');
         t.equal(tokens[0].value, 1);
         t.ok(tokens[1] instanceof Token.Addition, '1 is an Addition');

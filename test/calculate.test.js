@@ -53,8 +53,9 @@ test('/calculate', main => {
         });
         t.test('├─ respects the order of operations', t => {
             t.equal(calculate('1+2*4'), 9)
+            t.equal(calculate('2/-1'), -2)
             t.equal(calculate('1+4/2'), 3)
-            t.equal(calculate('1-4/2'), -1)
+            t.equal(calculate('2-4/-2'), 4)
             t.equal(calculate('(1+5)*2'), 12)
             t.equal(calculate('10-(-2*4)'), 18)
             t.end()

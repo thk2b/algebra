@@ -88,10 +88,23 @@ function tokenize(expression){
  * @param {{Token}} tokens – Tokens to analyze and transform
  */
 function transformTokens(tokens){
-    return tokens;
-    // return tokens.reduce((transformedTokens, token, index) => {
-
-    // }, []);
+    return tokens.reduce((transformedTokens, token, index) => {
+        if(token instanceof Token.Substraction){
+            const left = tokens[index - 1];
+            const right = tokens[index + 1];
+            if(left === undefined ||
+                (left instanceof Token.BinaryOperation) ||
+                (left instanceof Token.OpenParenthesis)
+            ){
+                /* Negative number: match any expression begining with a substraction or any binary operation followed by a substraction.*/
+                return transformedTokens.concat(
+                    new Token._Number(-1), new Token.Multiplication()
+                )
+            }
+        }
+        
+        return transformedTokens.concat(token);
+    }, []);
 }
 
 /** 
