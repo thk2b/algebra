@@ -13,6 +13,19 @@ test('core/parse', main => {
         t.ok(root.value instanceof Token._Number);
         t.end();
     });
+    main.test('├ negative number', t => {
+        const tokens = lex('-1');
+        const root = parse(tokens);
+        const walk = Arary.from(root);
+        t.deepEqual(walk, [
+            { operator: '*', precedence: 1 },
+            { value: -1 },
+            { value: 1 },
+        ])
+        t.ok(root instanceof Node);
+        t.ok(root.value instanceof Token._Number);
+        t.end();
+    });
 
     main.test('├ simple expressions', t => {
         t.test('├─ addition', t => {
@@ -225,5 +238,14 @@ test('core/parse', main => {
             t.equal(root.right.value.value, 2.5);
             t.end();
         });
+    });
+
+    main.test('├ syntax errors', t => {
+        t.test('├─ *')
+        t.test('├─ * a')
+        t.test('├─ a / *')
+        t.test('├─ a +')
+        t.test('├─ ( a - b ')
+        t.test('├─ a - b )')
     });
 });
