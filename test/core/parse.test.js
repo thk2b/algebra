@@ -4,6 +4,7 @@ import Token from '../../src/core/Token'
 import lex from '../../src/core/lex';
 import Node from '../../src/core/Node';
 import parse from '../../src/core/parse';
+import Error from '../../src/core/Error';
 
 test('core/parse', main => {
     main.test('├ number', t => {
@@ -241,11 +242,77 @@ test('core/parse', main => {
     });
 
     main.test('├ syntax errors', t => {
-        t.test('├─ *')
-        t.test('├─ * a')
-        t.test('├─ a / *')
-        t.test('├─ a +')
-        t.test('├─ ( a - b ')
-        t.test('├─ a - b )')
+        t.test('├─ binary operations', t => {
+            t.test('├── no left operand', t => {
+                t.throws(
+                    () => parse(lex('* 2')),
+                    Error.InvalidOperation
+                );
+                t.end();
+            });
+            t.test('├── two adjacent operands', t => {
+                t.throws(
+                    () => parse(lex('2 * /')),
+                    Error.InvalidOperation
+                );
+                t.end();
+            });
+            t.test('├── no right operand', t => {
+                t.throws(
+                    () => parse(lex('2 + ')),
+                    Error.InvalidOperation
+                );
+                t.end();
+            });
+            t.test('├─ no operands', t => {
+                t.throws(
+                    () => parse(lex('*')),
+                    Error.InvalidOperation
+                );
+                t.end();
+            });
+        });
+        t.test('├─ parentheses', t => {
+            t.test('├── no closing parenthesis ', t => {
+                t.throws(
+                    () => parse(lex('(1 - 2 ')),
+                    Error.UnmatchedParenthesis
+                );
+                t.throws(
+                    () => parse(lex('1 - ( 2 ')),
+                    Error.UnmatchedParenthesis,
+                    'throws when missing parenthesis somwhere in the expresison'
+                );
+                t.end();
+            });
+            t.test('├── no opening parenthesis', t => {
+                t.throws(
+                    () => parse(lex('1 - 2 )')),
+                    Error.ParseError
+                );
+                t.end();
+            });
+        });
+        t.test('├─ empty expression', t => {
+            t.test('├── inside parentheses', t => {
+                t.throws(
+                    () => parse(lex('()')),
+                    Error.MissingExpression
+                );
+                t.throws(
+                    () => parse(lex('1 + ()')),
+                    Error.MissingExpression,
+                    'shoud throw when there are empty parens in the expression'
+                );
+                t.end();
+            });
+            t.test('├── empty input', t => {
+                t.throws(
+                    () => parse(lex(' ')),
+                    Error.MissingExpression
+                );
+                t.end();
+            });
+        });
     });
 });

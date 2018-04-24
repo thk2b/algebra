@@ -1,5 +1,6 @@
 import Token, { CloseParenthesis } from './Token';
 import Node from './Node';
+import Error from './Error';
 
 const precedence = {
     '+': 0, '-': 0, '*': 1, '/': 1
@@ -64,7 +65,7 @@ export default function parse(tokens){
         }
         else if(token instanceof Token.BinaryOperation){
             if(root === null){
-                throw new Error('cannot apply operator to nothing');
+                throw new Error.InvalidOperation(token, 'Missing left expression.')
             } else {
                 if((root.value instanceof Token.BinaryOperation) && token.precedence > root.value.precedence){
                     // high precedence: we keep the same root, and insert the operator below it.
@@ -88,14 +89,14 @@ export default function parse(tokens){
             */
             const closingParenthesisIndex = findCloseParensIndex(tokens, index);
             if(closingParenthesisIndex === -1){
-                throw new Error('unmatched parenthesis');
+                throw new Error.UnmatchedParenthesis(token);
             };
             const subtreeStartIndex = index + 1;
             const subtreeLength = closingParenthesisIndex - subtreeStartIndex;
             
             const subExpressionTokens = tokens.slice(index + 1, index + 1 + subtreeLength);
             if(subExpressionTokens.length === 0){
-                throw new Error('empty expression');
+                throw new Error.MissingExpression();
             };
             const subtreeRoot = parse(subExpressionTokens);
             if(subtreeRoot.value instanceof Token.BinaryOperation){
@@ -111,11 +112,15 @@ export default function parse(tokens){
             continue;
         }
         else {
-            throw new Error(`invalid token at position ${index}: ${token.print()}`)
+            throw new Error.ParseError(token)
         };
     }
-    if(root !== leaf){
-        throw new Error('incomplete expression')
-    }
+    if(root !== leaf || root === null){
+        throw new Error.MissingExpression()
+    } else if(root.count === 1){
+        if(root.value instanceof Token.BinaryOperation){
+            throw new Error.InvalidOperation(root)       
+        }
+    };
     return root;
 }

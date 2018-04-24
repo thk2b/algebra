@@ -88,10 +88,10 @@ test('core/lex', main => {
         t.test('├── implicit multiplication', t => {
             const tokens = lex('1(2 + 3)');
             t.equal(tokens.length === 6, 'should add a Multiplication token')
-            t.ok(token[0] instanceof Token._Number, '0 should be a _Number');
-            t.ok(token[1] instanceof Token.Multiplication, '1 should be a Multiplication');
-            t.ok(token[2] instanceof Token.OpenParenthesis, '2 should be an OpenParenthesis');
-            t.ok(token[-1] instanceof Token.CloseParenthesis, 'last token should be an CloseParenthesis');
+            t.ok(tokens[0] instanceof Token._Number, '0 should be a _Number');
+            t.ok(tokens[1] instanceof Token.Multiplication, '1 should be a Multiplication');
+            t.ok(tokens[2] instanceof Token.OpenParenthesis, '2 should be an OpenParenthesis');
+            t.ok(tokens[-1] instanceof Token.CloseParenthesis, 'last token should be an CloseParenthesis');
             t.end();
         });
         t.test('├─ invalid token', t => {
