@@ -26,6 +26,7 @@
     "babel-tape-runner": "^2.0.1",
     "faucet": "0.0.1",
     "sinon": "^4.4.8",
-    "tape": "^4.9.0"
+    "tape": "^4.9.0",
+    "tape-catch": "^1.0.6"
   }
 }

@@ -8,6 +8,10 @@ function isDigit(char){
     return /[\d\.]/.test(char);
 }
 
+function isSign(char){
+    return /[\-+]/.test(char);
+}
+
 function isBinaryOperation(char){
     return /[+\-*\//]/.test(char);
 }
@@ -49,7 +53,7 @@ export default function lex(expression){
             continue;
         } else if(digits.length){
             tokens.push(tokenizeDigits(digits));
-        };
+        };   
         if(isWhitespace(char)){
             continue;
         }

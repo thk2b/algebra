@@ -1,4 +1,4 @@
-import test from 'tape';
+import test from 'tape-catch';
 
 import Token from '../../src/core/Token'
 import lex from '../../src/core/lex';

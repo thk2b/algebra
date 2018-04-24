@@ -1,4 +1,4 @@
-import test from 'tape';
+import test from 'tape-catch';
 
 import calculate from '../src/calculate';
 
@@ -56,7 +56,7 @@ test('/calculate', main => {
             t.equal(calculate('1+4/2'), 3)
             t.equal(calculate('1-4/2'), -1)
             t.equal(calculate('(1+5)*2'), 12)
-            // t.equal(calculate('10-(-2*4)'), 18)
+            t.equal(calculate('10-(-2*4)'), 18)
             t.end()
         });
     });
