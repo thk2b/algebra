@@ -97,8 +97,9 @@ function transformTokens(tokens){
                 (left instanceof Token.OpenParenthesis)
             ){
                 /* Negative number: match any expression begining with a substraction or any binary operation followed by a substraction.*/
+                multiplication.precedence = 1.5; // prevents -a/-b from being parsed as -1*a/-1*b. Instead, it is parsed as (-1*a)/(-1*b)
                 return transformedTokens.concat(
-                    new Token._Number(-1), new Token.Multiplication()
+                    new Token._Number(-1), multiplication
                 )
             }
         }
