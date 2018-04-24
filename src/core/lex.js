@@ -44,17 +44,16 @@ export default function lex(expression){
     const digits = [];
     const tokens = [];
     for(let [index, char] of expression.split('').entries()){
-        if(isWhitespace(char)){
-            continue;
-        }
-        else if(isDigit(char)){
+        if(isDigit(char)){
             digits.push(char);
             continue;
         } else if(digits.length){
             tokens.push(tokenizeDigits(digits));
         };
-        
-        if(isBinaryOperation(char)){
+        if(isWhitespace(char)){
+            continue;
+        }
+        else if(isBinaryOperation(char)){
             tokens.push(new {
                 '+': Token.Addition,
                 '-': Token.Substraction,
