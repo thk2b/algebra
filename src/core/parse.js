@@ -5,6 +5,20 @@ const precedence = {
     '+': 0, '-': 0, '*': 1, '/': 1
 }
 
+function findCloseParensIndex(tokens, openParensIndex){
+    let openParensCount = 0;
+    const index = tokens.slice(openParensIndex + 1).findIndex( token => {
+        if(token instanceof Token.CloseParenthesis){
+            if(openParensCount === 0) return true;
+            openParensCount -= 1;
+        } else if (token instanceof Token.OpenParenthesis){
+            openParensCount += 1;
+        }
+        return false;
+    });
+    return index === -1 ? index : index + openParensIndex + 1;
+};
+
 /**
  * Transforms tokens into a syntax tree.
  * Algorithm:
@@ -41,8 +55,6 @@ export default function parse(tokens){
             if(leaf === null){
                 root = new Node(token);
             } else {
-                console.log({leaf})
-                console.log({token})
                 leaf.add(new Node(token));
             };
             leaf = root;
@@ -73,9 +85,7 @@ export default function parse(tokens){
             ** Remove the closing parens.
             ** Attach the subtree to the leaf.
             */
-            const closingParenthesisIndex = tokens.findIndex(
-                t => t instanceof Token.CloseParenthesis
-            )
+            const closingParenthesisIndex = findCloseParensIndex(tokens, index);
             if(closingParenthesisIndex === -1){
                 throw new Error('unmatched parenthesis');
             };
