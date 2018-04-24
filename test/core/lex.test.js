@@ -32,20 +32,6 @@ test('core/lex', main => {
                 t.equal(token.value, 1234.5678);
                 t.end();
             });
-            t.test('├── negative numbers', t => {
-                const [ token ] = lex('-1234.5678');
-                t.ok(token);
-                t.ok(token instanceof Token._Number, 'should be a _Number');
-                t.equal(token.value, -1234.5678);
-                t.end();
-            });
-            t.test('├── explicitly postitive numbers', t => {
-                const [ token ] = lex('+1234.5678');
-                t.ok(token);
-                t.ok(token instanceof Token._Number, 'should be a _Number');
-                t.equal(token.value, 1234.5678);
-                t.end();
-            });
         })
         t.test('├─ binary operators', t => {
             t.test('├── +', t => {
