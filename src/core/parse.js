@@ -77,14 +77,13 @@ export default function parse(tokens){
             const subtreeLength = closingParenthesisIndex - subtreeStartIndex;
             
             const subExpressionTokens = tokens.slice(index + 1, index + 1 + subtreeLength);
-            tokens.splice(closingParenthesisIndex, 1);
             if(subExpressionTokens.length === 0){
                 throw new Error('empty expression');
             };
             const subtree = parse(subExpressionTokens);
             leaf.add(subtree);
             leaf = root;
-            index += subtreeLength + 1;
+            index += subtreeLength + 2;
             continue;
         }
         else {
