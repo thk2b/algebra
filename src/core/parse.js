@@ -33,14 +33,16 @@ export default function parse(tokens){
     if(tokens.length === 0){
         throw new Error('empty expresison');
     };
-
     let root = new Node(tokens[0]);
     let leaf = root;
 
-    for(let [index, token] of tokens.slice(1).entries()){  
-        if(token instanceof Token._Number){            
+    let index = 1;
+    while(index < tokens.length){
+        let token = tokens[index];
+        if(token instanceof Token._Number){
             leaf.add(new Node(token));
             leaf = root;
+            index += 1;
             continue;
         }
         else if(token instanceof Token.BinaryOperation){
@@ -48,10 +50,13 @@ export default function parse(tokens){
                 // high precedence: we keep the same root, and insert the operator below it.
                 const node = root.insertRight(new Node(token));
                 leaf = node;
+                index += 1;
+                continue;
             } else {
                 // low precedence: we replace the root and attach the current root
                 root = new Node(token, root);
                 leaf = root;
+                index += 1;
                 continue;
             };
         }
@@ -68,19 +73,22 @@ export default function parse(tokens){
             if(closingParenthesisIndex === -1){
                 throw new Error('unmatched parenthesis');
             };
-            const subtreeStartIndex = index + 1
-            const subtreeLength = closingParenthesisIndex - subtreeStartIndex
-            const subExpressionTokens = tokens.splice(index + 1, subtreeLength).slice(0, -1);
+            const subtreeStartIndex = index + 1;
+            const subtreeLength = closingParenthesisIndex - subtreeStartIndex;
+            
+            const subExpressionTokens = tokens.slice(index + 1, index + 1 + subtreeLength);
+            tokens.splice(closingParenthesisIndex, 1);
             if(subExpressionTokens.length === 0){
                 throw new Error('empty expression');
             };
             const subtree = parse(subExpressionTokens);
             leaf.add(subtree);
             leaf = root;
+            index += subtreeLength + 1;
             continue;
         }
         else {
-            throw new Error(`invalid token at position ${index}: ${token.toString()}`)
+            throw new Error(`invalid token at position ${index}: ${token.print()}`)
         };
     }
     if(root !== leaf){

@@ -70,6 +70,22 @@ test('core/parse', main => {
             ])
             t.end()
         });
+        t.test('├─ a + b + c - d - e', t => {
+            const root = parse(lex('1 + 20 + 3.5 - 4 - 5'));
+            const walk = Array.from(root)
+            t.deepEqual(walk, [
+                { operator: '-', precedence: 0 },
+                { operator: '-', precedence: 0 },
+                { operator: '+', precedence: 0 },
+                { operator: '+', precedence: 0 },
+                { value: 1 },
+                { value: 20 },
+                { value: 3.5 },
+                { value: 4 },
+                { value: 5 },
+            ])
+            t.end()
+        });
         t.test('├─ a * b + c ', t => {
             const root = parse(lex('1 * 20 + 3.5'));
             const walk = Array.from(root)
@@ -94,9 +110,65 @@ test('core/parse', main => {
             ])
             t.end()
         });
+        t.test('├─ a + b * c - e / f', t => {
+            const root = parse(lex('1 + 20 * 3.5 - 4 / 5'));
+            const walk = Array.from(root)
+            t.deepEqual(walk, [
+                { operator: '-', precedence: 0 },
+                { operator: '+', precedence: 0 },
+                { value: 1 },
+                { operator: '*', precedence: 1 },
+                { value: 20 },
+                { value: 3.5 },
+                { operator: '/', precedence: 1 },
+                { value: 4 },
+                { value: 5 },
+            ])
+            t.end()
+        });
     });
     
     main.test('├ expressions with parentheses', t => {
+        t.test('├─ a + (b + c)', t => {
+            const root = parse(lex('1 + 20 + 3.5'));
+            const walk = Array.from(root)
+            t.deepEqual(walk, [
+                { operator: '+', precedence: 0 },
+                { operator: '+', precedence: 0 },
+                { value: 1 },
+                { value: 20 },
+                { value: 3.5 }
+            ])
+            t.end()
+        });
+        t.test('├─ a + (b + c) * d ', t => {
+            const root = parse(lex('0 + (1 + 20) * 3.5'));
+            const walk = Array.from(root)
+            t.deepEqual(walk, [
+                { operator: '+', precedence: 0 },
+                { value: 0 },
+                { operator: '*', precedence: 1 },
+                { operator: '+', precedence: 0 },
+                { value: 1 },
+                { value: 20 },
+                { value: 3.5 }
+            ])
+            t.end()
+        });
+        t.test('├─ (a + b) * c ', t => {
+            const root = parse(lex('(1 + 20) * 3.5'));
+            const walk = Array.from(root)
+            t.deepEqual(walk, [
+                { operator: '*', precedence: 0 },
+                { operator: '+', precedence: 0 },
+                { value: 0 },
+                { operator: '+', precedence: 0 },
+                { value: 1 },
+                { value: 20 },
+                { value: 3.5 }
+            ])
+            t.end()
+        });
         t.test('├─ wrapping the entire expression in parentheses', t => {
             const tokens = lex('(10 / 2.5)');
             const root = parse(tokens);

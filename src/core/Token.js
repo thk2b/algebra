@@ -2,7 +2,7 @@ export class _Number {
     constructor(value){
         this.value = value;
     };
-    toString(){
+    print(){
         return `Number(${this.value})`
     };
 };
@@ -12,7 +12,7 @@ export class BinaryOperation {
         this.operator = operator;
         this.precedence = precedence;
     };
-    toString(){
+    print(){
         return `Binary operation(${this.operator})`
     };
 };
@@ -29,8 +29,12 @@ export class Multiplication extends BinaryOperation {
     constructor(){ super('*', 1); };
 };
 
-export class OpenParenthesis { };
-export class CloseParenthesis { };
+export class OpenParenthesis {
+    print(){ return 'Opening parenthesis' }
+};
+export class CloseParenthesis {
+    print(){ return 'Closing parenthesis' }
+};
 
 export default {
     _Number,

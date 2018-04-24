@@ -26,7 +26,7 @@ export default class Node {
         } else if (this.right === undefined){
             this.right = this._validate(node);
         } else {
-            throw new Error('A node cannot have more than two children.');
+            throw new Error(`A node cannot have more than two children: you tried adding ${node} to ${this}`);
         };
         return this;
     };
