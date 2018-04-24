@@ -288,7 +288,7 @@ test('core/parse', main => {
             t.test('├── no opening parenthesis', t => {
                 t.throws(
                     () => parse(lex('1 - 2 )')),
-                    Error.ParseError
+                    Error.UnmatchedParenthesis
                 );
                 t.end();
             });

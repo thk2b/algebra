@@ -112,7 +112,11 @@ export default function parse(tokens){
             continue;
         }
         else {
-            throw new Error.ParseError(token)
+            if(token instanceof CloseParenthesis){
+                throw new Error.UnmatchedParenthesis(token)
+            } else {
+                throw new Error.ParseError(token)
+            };
         };
     }
     if(root !== leaf || root === null){
