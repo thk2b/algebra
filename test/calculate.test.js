@@ -46,19 +46,27 @@ test('/calculate', main => {
             t.end();
         });
         t.test('├─ with multiple mixed operands', t => {
+            t.equal(calculate('-1+2'), 1, '1');
+            t.equal(calculate('-1-2'), -3, '1');
+            t.equal(calculate('-1*2'), -2, '1');
+            t.equal(calculate('20/-1'), -20);
+            t.equal(calculate('-4/1'), -4);
+            t.equal(calculate('10*-1'), -10);
             t.equal(calculate('1.2345+2-3'), 0.2345, '1');
             t.equal(calculate('3*5/5'), 3, '2');
             t.equal(calculate('2*4+3.45'), 11.45, '3');
             t.end();
         });
         t.test('├─ respects the order of operations', t => {
-            t.equal(calculate('1+2*4'), 9)
-            t.equal(calculate('2/-1'), -2)
-            t.equal(calculate('1+4/2'), 3)
-            t.equal(calculate('2-4/-2'), 4)
-            t.equal(calculate('(1+5)*2'), 12)
-            t.equal(calculate('10-(-2*4)'), 18)
-            t.end()
+            t.equal(calculate('1+2*4'), 9);
+            t.equal(calculate('1*2/1*2+1'), 5);
+            t.equal(calculate('1+2/-1'), -1);
+            t.equal(calculate('1+4/2'), 3);
+            t.equal(calculate('-4/-2'), 2);
+            t.equal(calculate('2-4/-2'), 4);
+            t.equal(calculate('(1+5)*2'), 12);
+            t.equal(calculate('10-(-2*4)'), 18);
+            t.end();
         });
     });
 });

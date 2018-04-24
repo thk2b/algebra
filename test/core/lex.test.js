@@ -105,7 +105,7 @@ test('core/lex', main => {
                     t.equal(token.operator, '*');
                     t.equal(token.precedence, 1, 'should have the correct precedence');
                     t.end();
-                })
+                });
                 t.test('├─── implicit multiplication', t => {
                     const tokens = lex('1(2 + 3)');
                     t.equal(tokens.length, 7, 'should add a Multiplication token');
@@ -118,12 +118,23 @@ test('core/lex', main => {
             });
             t.test('├── /', t => {
                 const [ token ] = lex('/');
-                t.ok(token);
-                t.ok(token instanceof Token.BinaryOperation, 'should be a BinaryOperation');
-                t.ok(token instanceof Token.Division, 'should be a Division');
-                t.equal(token.operator, '/');
-                t.equal(token.precedence, 1, 'should have the correct precedence');
-                t.end();
+                t.test('├─── operator', t => {
+                    t.ok(token);
+                    t.ok(token instanceof Token.BinaryOperation, 'should be a BinaryOperation');
+                    t.ok(token instanceof Token.Division, 'should be a Division');
+                    t.equal(token.operator, '/');
+                    t.equal(token.precedence, 1, 'should have the correct precedence');
+                    t.end();
+                });
+                t.test('├─── negative division', t => {
+                    const tokens = lex('-4/-2');
+                    t.deepEqual(tokens, [
+                        { value: -1 }, { operator: '*', precedence: 1 }, { value: 4 },
+                        { operator: '/', precedence: 1 },
+                        { value: -1 }, { operator: '*', precedence: 1 }, { value: 2 }
+                    ]);
+                    t.end();
+                });
             });
         });
         t.test('├─ parentheses', t => {

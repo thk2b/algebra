@@ -71,7 +71,32 @@ test('core/parse', main => {
         });
     });
 
-    main.test('├ complex expressions', t => {
+    main.test('├ more complex expressions', t => {
+        t.test('├─ a * b / c * d', t => {
+            const root = parse(lex('1*2/3*4'));
+            const walk = Array.from(root)
+            t.deepEqual(walk, [
+                { operator: '*', precedence: 1 },
+                { operator: '/', precedence: 1 },
+                { operator: '*', precedence: 1 },
+                { value: 1 }, { value: 2 },
+                { value: 3 }, { value: 4 },
+            ]);
+            t.end();
+        });
+        t.test('├─ -a / -b', t => {
+            // currently doing this '-1*4/-1*2' ; 
+            const root = parse(lex('-4/-2'));
+            const walk = Array.from(root)
+            t.deepEqual(walk, [
+                { operator: '/', precedence: 1 },
+                { operator: '*', precedence: 1 },
+                { value: -1 }, { value: 4 },
+                { operator: '*', precedence: 1 },
+                { value: -1 }, { value: 2 },
+            ]);
+            t.end();
+        });
         t.test('├─ a + b + c', t => {
             const root = parse(lex('1 + 20 + 3.5'));
             const walk = Array.from(root)
@@ -81,12 +106,12 @@ test('core/parse', main => {
                 { value: 1 },
                 { value: 20 },
                 { value: 3.5 }
-            ])
-            t.end()
+            ]);
+            t.end();
         });
         t.test('├─ a + b + c - d - e', t => {
             const root = parse(lex('1 + 20 + 3.5 - 4 - 5'));
-            const walk = Array.from(root)
+            const walk = Array.from(root);
             t.deepEqual(walk, [
                 { operator: '-', precedence: 0 },
                 { operator: '-', precedence: 0 },
@@ -97,20 +122,20 @@ test('core/parse', main => {
                 { value: 3.5 },
                 { value: 4 },
                 { value: 5 },
-            ])
-            t.end()
+            ]);
+            t.end();
         });
         t.test('├─ a * b + c ', t => {
             const root = parse(lex('1 * 20 + 3.5'));
-            const walk = Array.from(root)
+            const walk = Array.from(root);
             t.deepEqual(walk, [
                 { operator: '+', precedence: 0 },
                 { operator: '*', precedence: 1 },
                 { value: 1 },
                 { value: 20 },
                 { value: 3.5 }
-            ])
-            t.end()
+            ]);
+            t.end();
         });
         t.test('├─ a + b * c ', t => {
             const root = parse(lex('1 + 20 * 3.5'));
@@ -126,7 +151,7 @@ test('core/parse', main => {
         });
         t.test('├─ a + b * c - e / f', t => {
             const root = parse(lex('1 + 20 * 3.5 - 4 / 5'));
-            const walk = Array.from(root)
+            const walk = Array.from(root);
             t.deepEqual(walk, [
                 { operator: '-', precedence: 0 },
                 { operator: '+', precedence: 0 },
@@ -137,8 +162,8 @@ test('core/parse', main => {
                 { operator: '/', precedence: 1 },
                 { value: 4 },
                 { value: 5 },
-            ])
-            t.end()
+            ]);
+            t.end();
         });
     });
     
