@@ -32,6 +32,20 @@ test('core/lex', main => {
                 t.equal(token.value, 1234.5678);
                 t.end();
             });
+            t.test('├── negative numbers', t => {
+                const [ token ] = lex('-1234.5678');
+                t.ok(token);
+                t.ok(token instanceof Token._Number, 'should be a _Number');
+                t.equal(token.value, -1234.5678);
+                t.end();
+            });
+            t.test('├── explicitly postitive numbers', t => {
+                const [ token ] = lex('+1234.5678');
+                t.ok(token);
+                t.ok(token instanceof Token._Number, 'should be a _Number');
+                t.equal(token.value, 1234.5678);
+                t.end();
+            });
         })
         t.test('├─ binary operators', t => {
             t.test('├── +', t => {
@@ -84,6 +98,15 @@ test('core/lex', main => {
                 t.ok(token instanceof Token.CloseParenthesis, 'should be a CloseParenthesis');
                 t.end();
             });
+        });
+        t.test('├── implicit multiplication', t => {
+            const tokens = lex('1(2 + 3)');
+            t.equal(tokens.length === 6, 'should add a Multiplication token')
+            t.ok(token[0] instanceof Token._Number, '0 should be a _Number');
+            t.ok(token[1] instanceof Token.Multiplication, '1 should be a Multiplication');
+            t.ok(token[2] instanceof Token.OpenParenthesis, '2 should be an OpenParenthesis');
+            t.ok(token[-1] instanceof Token.CloseParenthesis, 'last token should be an CloseParenthesis');
+            t.end();
         });
         t.test('├─ invalid token', t => {
             t.throws(
