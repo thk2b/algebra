@@ -1,4 +1,4 @@
-import Token from './token'
+import Token, { CloseParenthesis } from './Token';
 import Node from './Node';
 
 const precedence = {
@@ -37,16 +37,16 @@ export default function parse(tokens){
     let root = new Node(tokens[0]);
     let leaf = root;
 
-    for(let [index, token] of tokens.slice(1).entries()){    
+    for(let [index, token] of tokens.slice(1).entries()){  
         if(token instanceof Token._Number){            
             leaf.add(new Node(token));
             leaf = root;
             continue;
         }
-        else if(token instanceof Token.BinaryOperator){
-            if(root.value.type === BINARY_OPERATION && token.precendece > root.value.precedence){
+        else if(token instanceof Token.BinaryOperation){
+            if((root.value instanceof Token.BinaryOperation) && token.precedence > root.value.precedence){
                 // high precedence: we keep the same root, and insert the operator below it.
-                const node = root.insertRight(Node(token));
+                const node = root.insertRight(new Node(token));
                 leaf = node;
             } else {
                 // low precedence: we replace the root and attach the current root
@@ -80,7 +80,7 @@ export default function parse(tokens){
             continue;
         }
         else {
-            throw new Error('invalid token')
+            throw new Error(`invalid token at position ${index}: ${token.toString()}`)
         };
     }
     if(root !== leaf){

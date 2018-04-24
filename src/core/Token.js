@@ -2,12 +2,18 @@ export class _Number {
     constructor(value){
         this.value = value;
     };
+    toString(){
+        return `Number(${this.value})`
+    };
 };
 
 export class BinaryOperation {
     constructor(operator, precedence){
         this.operator = operator;
         this.precedence = precedence;
+    };
+    toString(){
+        return `Binary operation(${this.operator})`
     };
 };
 export class Addition extends BinaryOperation {

@@ -13,20 +13,99 @@ test('core/parse', main => {
         t.ok(root.value instanceof Token._Number);
         t.end();
     });
-    main.test('├ whitespace', t => {
-        const tokens = lex('1 ');
-        const root = parse(tokens);
-        t.ok(root instanceof Node);
-        t.ok(root.value instanceof Token._Number);
-        t.end();
+
+    main.test('├ simple expressions', t => {
+        t.test('├─ addition', t => {
+            const tokens = lex('10 + 2.5');
+            const root = parse(tokens);
+            t.ok(root.value instanceof Token.Addition);
+            t.ok(root.left.value instanceof Token._Number, 'left should be a number');
+            t.equal(root.left.value.value, 10);
+            t.ok(root.right.value instanceof Token._Number, 'right should be a number');
+            t.equal(root.right.value.value, 2.5);
+            t.end();
+        });
+        t.test('├─ substraction', t => {
+            const tokens = lex('10 - 2.5');
+            const root = parse(tokens);
+            t.ok(root.value instanceof Token.Substraction);
+            t.ok(root.left.value instanceof Token._Number, 'left should be a number');
+            t.equal(root.left.value.value, 10);
+            t.ok(root.right.value instanceof Token._Number, 'right should be a number');
+            t.equal(root.right.value.value, 2.5);
+            t.end();
+        });
+        t.test('├─ multiplication', t => {
+            const tokens = lex('10 * 2.5');
+            const root = parse(tokens);
+            t.ok(root.value instanceof Token.Multiplication);
+            t.ok(root.left.value instanceof Token._Number, 'left should be a number');
+            t.equal(root.left.value.value, 10);
+            t.ok(root.right.value instanceof Token._Number, 'right should be a number');
+            t.equal(root.right.value.value, 2.5);
+            t.end();
+        });
+        t.test('├─ division', t => {
+            const tokens = lex('10 / 2.5');
+            const root = parse(tokens);
+            t.ok(root.value instanceof Token.Division);
+            t.ok(root.left.value instanceof Token._Number, 'left should be a number');
+            t.equal(root.left.value.value, 10);
+            t.ok(root.right.value instanceof Token._Number, 'right should be a number');
+            t.equal(root.right.value.value, 2.5);
+            t.end();
+        });
     });
-    // main.test('├ simple operations', t => {
-    //     t.test('├─ addition', t => {
-    //         const tokens = lex('1+2');
-    //         const root = parse(tokens);
-    //         t.ok(root instanceof Node);
-    //         t.ok(root.value instanceof Token._Number);
-    //         t.end();
-    //     });
-    // });
+
+    main.test('├ complex expressions', t => {
+        t.test('├─ a + b + c', t => {
+            const root = parse(lex('1 + 20 + 3.5'));
+            const walk = Array.from(root)
+            t.deepEqual(walk, [
+                { operator: '+', precedence: 0 },
+                { operator: '+', precedence: 0 },
+                { value: 1 },
+                { value: 20 },
+                { value: 3.5 }
+            ])
+            t.end()
+        });
+        t.test('├─ a * b + c ', t => {
+            const root = parse(lex('1 * 20 + 3.5'));
+            const walk = Array.from(root)
+            t.deepEqual(walk, [
+                { operator: '+', precedence: 0 },
+                { operator: '*', precedence: 1 },
+                { value: 1 },
+                { value: 20 },
+                { value: 3.5 }
+            ])
+            t.end()
+        });
+        t.test('├─ a + b * c ', t => {
+            const root = parse(lex('1 + 20 * 3.5'));
+            const walk = Array.from(root)
+            t.deepEqual(walk, [
+                { operator: '+', precedence: 0 },
+                { value: 1 },
+                { operator: '*', precedence: 1 },
+                { value: 20 },
+                { value: 3.5 }
+            ])
+            t.end()
+        });
+    });
+    
+    main.test('├ expressions with parentheses', t => {
+        t.test('├─ wrapping the entire expression in parentheses', t => {
+            const tokens = lex('(10 / 2.5)');
+            const root = parse(tokens);
+            t.ok(root.value instanceof Token.Division);
+            t.ok(root.left.value instanceof Token._Number, 'left should be a number');
+            t.equal(root.left.value.value, 10);
+            t.ok(root.right.value instanceof Token._Number, 'right should be a number');
+            t.equal(root.right.value.value, 2.5);
+            t.end();
+        });
+    });
 });
