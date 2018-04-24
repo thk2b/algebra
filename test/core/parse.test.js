@@ -130,14 +130,30 @@ test('core/parse', main => {
     
     main.test('├ expressions with parentheses', t => {
         t.test('├─ a + (b + c)', t => {
-            const root = parse(lex('1 + 20 + 3.5'));
+            const root = parse(lex('1 + (20 + 3.5)'));
             const walk = Array.from(root)
             t.deepEqual(walk, [
+                { operator: '+', precedence: 0 },
+                { value: 1 },
+                { operator: '+', precedence: 0 },
+                { value: 20 },
+                { value: 3.5 }
+            ])
+            t.end()
+        });
+        t.test('├─ a + (b + (c + d))', t => {
+            const root = parse(lex('1 + (20 + (3.5 - (4 - 5))'));
+            const walk = Array.from(root)
+            t.deepEqual(walk, [
+                { operator: '-', precedence: 0 },
+                { operator: '-', precedence: 0 },
                 { operator: '+', precedence: 0 },
                 { operator: '+', precedence: 0 },
                 { value: 1 },
                 { value: 20 },
-                { value: 3.5 }
+                { value: 3.5 },
+                { value: 4 },
+                { value: 5 },
             ])
             t.end()
         });
@@ -152,6 +168,24 @@ test('core/parse', main => {
                 { value: 1 },
                 { value: 20 },
                 { value: 3.5 }
+            ])
+            t.end()
+        });
+        t.test('├─ a + ( b * ( c + ( d - e )) * f ) ', t => {
+            const root = parse(lex('1+(2*(3+(4-5))*6)'));
+            const walk = Array.from(root)
+            t.deepEqual(walk, [
+                { operator: '+', precedence: 0 },
+                { value: 1 },
+                { operator: '*', precedence: 1 },
+                { operator: '*', precedence: 1 },
+                { value: 2 },
+                { operator: '+', precedence: 0 },
+                { value: 3 },
+                { operator: '-', precedence: 0 },
+                { value: 4 },
+                { value: 5 },
+                { value: 6 },
             ])
             t.end()
         });
