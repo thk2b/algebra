@@ -1,5 +1,9 @@
 import Token from './Token'
 
+function isWhitespace(char){
+    return /\s/.test(char)
+};
+
 function isDigit(char){
     return /[\d\.]/.test(char);
 }
@@ -40,7 +44,10 @@ export default function lex(expression){
     const digits = [];
     const tokens = [];
     for(let [index, char] of expression.split('').entries()){
-        if(isDigit(char)){
+        if(isWhitespace(char)){
+            continue;
+        }
+        else if(isDigit(char)){
             digits.push(char);
             continue;
         } else if(digits.length){
@@ -64,7 +71,7 @@ export default function lex(expression){
             continue;
         }
         else {
-            throw new Error(`invalid character at position ${index}:${character}`);
+            throw new Error(`invalid character at position ${index}:${char}`);
         };
     };
     if(digits.length){

@@ -29,7 +29,7 @@ const precedence = {
  * @param {*} tokens – lexer tokens
  */
 
-function parse(tokens){
+export default function parse(tokens){
     if(tokens.length === 0){
         throw new Error('empty expresison');
     };

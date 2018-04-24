@@ -5,6 +5,11 @@ import Token from '../../src/core/Token';
 
 test('core/lex', main => {
     main.test('├ individual tokens', t => {
+        main.test('├ whitespace', t => {
+            const tokens = lex(' ');
+            t.equal(tokens.length, 0)
+            t.end();
+        });
         t.test('├─ numbers', t => {
             t.test('├── single digit', t => {
                 const [ token ] = lex('1');
