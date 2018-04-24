@@ -135,7 +135,7 @@ test('core/parse', main => {
             t.deepEqual(walk, [
                 { operator: '+', precedence: 0 },
                 { value: 1 },
-                { operator: '+', precedence: 0 },
+                { operator: '+', precedence: 1 },
                 { value: 20 },
                 { value: 3.5 }
             ])
@@ -145,10 +145,8 @@ test('core/parse', main => {
             const root = parse(lex('(1 + 20) * 3.5'));
             const walk = Array.from(root)
             t.deepEqual(walk, [
-                { operator: '*', precedence: 0 },
-                { operator: '+', precedence: 0 },
-                { value: 0 },
-                { operator: '+', precedence: 0 },
+                { operator: '*', precedence: 1 },
+                { operator: '+', precedence: 1 },
                 { value: 1 },
                 { value: 20 },
                 { value: 3.5 }
@@ -161,9 +159,9 @@ test('core/parse', main => {
             t.deepEqual(walk, [
                 { operator: '+', precedence: 0 },
                 { value: 1 },
-                { operator: '+', precedence: 0 },
+                { operator: '+', precedence: 1 },
                 { value: 2 },
-                { operator: '+', precedence: 0 },
+                { operator: '+', precedence: 1 },
                 { value: 3 },
                 { value: 4 },
             ])
@@ -175,11 +173,11 @@ test('core/parse', main => {
             t.deepEqual(walk, [
                 { operator: '+', precedence: 0 },
                 { value: 1 },
-                { operator: '+', precedence: 0 },
+                { operator: '+', precedence: 1 },
                 { value: 20 },
-                { operator: '-', precedence: 0 },
+                { operator: '-', precedence: 1 },
                 { value: 3.5 },
-                { operator: '-', precedence: 0 },
+                { operator: '-', precedence: 1 },
                 { value: 4 },
                 { value: 5 },
             ])
@@ -192,7 +190,7 @@ test('core/parse', main => {
                 { operator: '+', precedence: 0 },
                 { value: 0 },
                 { operator: '*', precedence: 1 },
-                { operator: '+', precedence: 0 },
+                { operator: '+', precedence: 1 },
                 { value: 1 },
                 { value: 20 },
                 { value: 3.5 }
@@ -208,9 +206,9 @@ test('core/parse', main => {
                 { operator: '*', precedence: 1 },
                 { operator: '*', precedence: 1 },
                 { value: 2 },
-                { operator: '+', precedence: 0 },
+                { operator: '+', precedence: 1 },
                 { value: 3 },
-                { operator: '-', precedence: 0 },
+                { operator: '-', precedence: 1 },
                 { value: 4 },
                 { value: 5 },
                 { value: 6 },
@@ -218,7 +216,7 @@ test('core/parse', main => {
             t.end()
         });
         t.test('├─ wrapping the entire expression in parentheses', t => {
-            const tokens = lex('(10 / 2.5)');
+            const tokens = lex('(((10 / 2.5)))');
             const root = parse(tokens);
             t.ok(root.value instanceof Token.Division);
             t.ok(root.left.value instanceof Token._Number, 'left should be a number');

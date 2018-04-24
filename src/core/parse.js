@@ -97,6 +97,9 @@ export default function parse(tokens){
                 throw new Error('empty expression');
             };
             const subtreeRoot = parse(subExpressionTokens);
+            if(subtreeRoot.value instanceof Token.BinaryOperation){
+                subtreeRoot.value.precedence = 1;
+            }
             if(root === null){
                 root = subtreeRoot;
             } else {
