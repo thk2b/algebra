@@ -52,8 +52,8 @@ const patterns = {
  * Must returns the tokens, even if no changes were made.
  * May remove or add tokens.
  */
-const transformations = {
-    negativeNumber(tokens, token, index){
+const transformations = [
+    function negativeNumber(tokens, token, index){
         if(!(token instanceof Token.Substraction)) return tokens;
         const prev = tokens[index - 1];
         const next = tokens[index + 1];
@@ -78,7 +78,7 @@ const transformations = {
         };
         return tokens;
     },
-    implicitMultiplication(tokens, token, index){
+    function implicitMultiplication(tokens, token, index){
         if ((token instanceof Token._Number) || (token instanceof Token.CloseParenthesis)){
             const next = tokens[index + 1];
             if(next instanceof Token.OpenParenthesis) {
@@ -91,7 +91,7 @@ const transformations = {
         };
         return tokens;
     }
-};
+];
 
 /**
  * For every character in the expression, finds the first pattern that matches and updates the 
@@ -122,7 +122,7 @@ function tokenize(expression){
  * @returns {[Token]} – Array of transformed tokens
  */
 function transform(tokens){
-    return Object.values(transformations).reduce(
+    return transformations.reduce(
         (transformedTokens, transformation) => {
             return transformedTokens.reduce(
                 (transformingTokens, _, index) => {
