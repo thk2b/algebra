@@ -1,7 +1,7 @@
 import test from 'tape-catch';
 
 import { parse, Node, lex, Token } from '../../';
-import ParseError from '../ParseError';
+import { ParseError } from '../';
 
 test('core/parse', main => {
     main.test('├ number', t => {

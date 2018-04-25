@@ -1,7 +1,6 @@
 import test from 'tape-catch';
 
-import lex from '../lex';
-import Token from '../Token';
+import lex, { Token } from '../';
 import LexError from '../LexError';
 
 test('core/lex', main => {

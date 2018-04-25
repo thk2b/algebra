@@ -2,20 +2,6 @@ import { Token } from '../lex';
 import Node from './Node';
 import ParseError from './ParseError';
 
-function findCloseParensIndex(tokens, openParensIndex){
-    let openParensCount = 0;
-    const index = tokens.slice(openParensIndex + 1).findIndex( token => {
-        if(token instanceof Token.CloseParenthesis){
-            if(openParensCount === 0) return true;
-            openParensCount -= 1;
-        } else if (token instanceof Token.OpenParenthesis){
-            openParensCount += 1;
-        }
-        return false;
-    });
-    return index === -1 ? index : index + openParensIndex + 1;
-};
-
 /**
  * Transforms tokens into a syntax tree.
  * Algorithm:
@@ -41,7 +27,6 @@ function findCloseParensIndex(tokens, openParensIndex){
  *     Check the token that immediately follows the closing parenthesis.
  * @param {*} tokens – lexer tokens
  */
-
 export default function parse(tokens){
     const _tokens = tokens.slice();
     const { root, leaf } = _tokens.reduce(
@@ -66,6 +51,20 @@ export default function parse(tokens){
         };
     };
     return root;
+};
+
+function findCloseParensIndex(tokens, openParensIndex){
+    let openParensCount = 0;
+    const index = tokens.slice(openParensIndex + 1).findIndex( token => {
+        if(token instanceof Token.CloseParenthesis){
+            if(openParensCount === 0) return true;
+            openParensCount -= 1;
+        } else if (token instanceof Token.OpenParenthesis){
+            openParensCount += 1;
+        }
+        return false;
+    });
+    return index === -1 ? index : index + openParensIndex + 1;
 };
 
 const expectedTokens = [
