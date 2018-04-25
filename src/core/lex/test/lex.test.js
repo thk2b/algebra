@@ -1,7 +1,7 @@
 import test from 'tape-catch';
 
-import lex from '../../src/core/lex';
-import Token from '../../src/core/Token';
+import lex from '../lex';
+import Token from '../Token';
 
 test('core/lex', main => {
     main.test('├ individual tokens', t => {

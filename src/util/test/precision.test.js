@@ -1,6 +1,6 @@
 import test from 'tape-catch';
 
-import precision from '../../src/util/precision';
+import precision from '../precision';
 
 test('util/precision', t => {
     t.equal(precision(1), 0)

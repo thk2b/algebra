@@ -1,6 +1,6 @@
-import Token, { CloseParenthesis } from './Token';
+import { Token } from '../lex';
 import Node from './Node';
-import Error from './Error';
+import ParseError from './ParseError';
 
 const precedence = {
     '+': 0, '-': 0, '*': 1, '/': 1
@@ -65,7 +65,7 @@ export default function parse(tokens){
         }
         else if(token instanceof Token.BinaryOperation){
             if(root === null){
-                throw new Error.InvalidOperation(token, 'Missing left expression.')
+                throw new ParseError.InvalidOperation(token, 'Missing left expression.')
             } else {
                 if((root.value instanceof Token.BinaryOperation) && token.precedence > root.value.precedence){
                     // high precedence: we keep the same root, and insert the operator below it.
@@ -89,14 +89,14 @@ export default function parse(tokens){
             */
             const closingParenthesisIndex = findCloseParensIndex(tokens, index);
             if(closingParenthesisIndex === -1){
-                throw new Error.UnmatchedParenthesis(token);
+                throw new ParseError.UnmatchedParenthesis(token);
             };
             const subtreeStartIndex = index + 1;
             const subtreeLength = closingParenthesisIndex - subtreeStartIndex;
             
             const subExpressionTokens = tokens.slice(index + 1, index + 1 + subtreeLength);
             if(subExpressionTokens.length === 0){
-                throw new Error.MissingExpression();
+                throw new ParseError.MissingExpression();
             };
             const subtreeRoot = parse(subExpressionTokens);
             if(subtreeRoot.value instanceof Token.BinaryOperation){
@@ -112,18 +112,18 @@ export default function parse(tokens){
             continue;
         }
         else {
-            if(token instanceof CloseParenthesis){
-                throw new Error.UnmatchedParenthesis(token)
+            if(token instanceof Token.CloseParenthesis){
+                throw new ParseError.UnmatchedParenthesis(token)
             } else {
-                throw new Error.ParseError(token)
+                throw new ParseError.ParseParseError(token)
             };
         };
     }
     if(root !== leaf || root === null){
-        throw new Error.MissingExpression()
+        throw new ParseError.MissingExpression()
     } else if(root.count === 1){
         if(root.value instanceof Token.BinaryOperation){
-            throw new Error.InvalidOperation(root)       
+            throw new ParseError.InvalidOperation(root)       
         }
     };
     return root;

@@ -1,6 +1,6 @@
 import test from 'tape-catch';
 
-import round from '../../src/util/round';
+import round from '../round';
 
 test('util/round', t => {
     t.equal(round(1, 0), 1, '1');

@@ -1,6 +1,6 @@
 import test from 'tape-catch';
 
-import Node from '../../src/core/Node';
+import Node from '../Node';
 
 test('core/Node', main => {
     main.test('├ constructor', t => {

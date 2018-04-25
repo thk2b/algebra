@@ -1,4 +1,4 @@
-export class _Number {
+class _Number {
     constructor(value){
         this.value = value;
     };
@@ -7,7 +7,7 @@ export class _Number {
     };
 };
 
-export class BinaryOperation {
+class BinaryOperation {
     constructor(operator, precedence){
         this.operator = operator;
         this.precedence = precedence;
@@ -16,23 +16,23 @@ export class BinaryOperation {
         return `Binary operation(${this.operator})`
     };
 };
-export class Addition extends BinaryOperation {
+class Addition extends BinaryOperation {
     constructor(){ super('+', 0); };
 };
-export class Substraction extends BinaryOperation {
+class Substraction extends BinaryOperation {
     constructor(){ super('-', 0); };
 };
-export class Division extends BinaryOperation {
+class Division extends BinaryOperation {
     constructor(){ super('/', 1); };
 };
-export class Multiplication extends BinaryOperation {
+class Multiplication extends BinaryOperation {
     constructor(){ super('*', 1); };
 };
 
-export class OpenParenthesis {
+class OpenParenthesis {
     print(){ return 'Opening parenthesis' }
 };
-export class CloseParenthesis {
+class CloseParenthesis {
     print(){ return 'Closing parenthesis' }
 };
 

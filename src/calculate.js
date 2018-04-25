@@ -1,7 +1,6 @@
-import lex from './core/lex';
-import parse from './core/parse';
+import { lex, parse, Token } from './core';
+
 import round from './util/round';
-import Token from './core/Token';
 import precision from './util/precision';
 import options from './options';
 const { min, max } = Math;

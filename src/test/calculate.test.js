@@ -1,6 +1,6 @@
 import test from 'tape-catch';
 
-import calculate from '../src/calculate';
+import calculate from '../calculate';
 
 test('/calculate', main => {
     main.test('├ basic operations', t => {

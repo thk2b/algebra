@@ -5,8 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "build": "babel src --out-dir lib",
-    "test": "babel-tape-runner 'test/**/*.test.js' | faucet",
-    "test:ugly": "babel-tape-runner 'test/**/*.test.js'",
+    "test": "babel-tape-runner 'src/**/*.test.js' | faucet",
+    "test:ugly": "babel-tape-runner 'src/**/*.test.js'",
     "prepare": "npm run build"
   },
   "repository": {
