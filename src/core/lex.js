@@ -105,10 +105,15 @@ function transformTokens(_tokens){
                     // multiply the whole expression by -1
                     return transformedTokens.concat(new Token.Number, new Token.Multiplication());
                 }
-                return transformedTokens.concat(token);
             }
         }
-        
+        else if ((token instanceof Token._Number) || (token instanceof Token.CloseParenthesis)){
+            const next = tokens[index + 1];
+            if(next instanceof Token.OpenParenthesis){
+                // implicit multiplication
+                return transformedTokens.concat(token, new Token.Multiplication());
+            }
+        }
         return transformedTokens.concat(token);
     }, []);
 }

@@ -113,7 +113,7 @@ test('core/lex', main => {
                     t.ok(tokens[0] instanceof Token._Number, '0 should be a _Number');
                     t.ok(tokens[1] instanceof Token.Multiplication, '1 should be a Multiplication');
                     t.ok(tokens[2] instanceof Token.OpenParenthesis, '2 should be an OpenParenthesis');
-                    t.ok(tokens[-1] instanceof Token.CloseParenthesis, 'last token should be an CloseParenthesis');
+                    t.ok(tokens[6] instanceof Token.CloseParenthesis, 'last token should be an CloseParenthesis');
                     t.end();
                 });
             });
