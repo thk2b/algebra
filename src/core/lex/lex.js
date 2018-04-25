@@ -14,15 +14,6 @@ function tokenizeDigits(digits){
  * coresponding to the new tokens and digits.
  */
 
-function concatWithDigits(token, tokens, digits){
-    return digits.length === 0
-    ? tokens.concat(token)
-    : tokens.concat(
-        tokenizeDigits(digits),
-        token
-    );
-};
-
 function createNonDigitTokenizer(TokenConstructor){
     return function(char, tokens, digits){
         const token = new TokenConstructor()
