@@ -1,30 +1,31 @@
-import Token from './Token'
+import Token from './Token';
+import LexError from './LexError';
 
-const { parseFloat } = Number
+const { parseFloat } = Number;
 
 function tokenizeDigits(digits){
-    return new Token._Number(parseFloat(digits.join('')))
+    return new Token._Number(parseFloat(digits.join('')));
 };
-
-/**
- * Patterns.
- * Keys are regular expressions.
- * Values are functions of the current character, the tokens and the digits.
- * They must return an object with keys { tokens, digits },
- * coresponding to the new tokens and digits.
- */
 
 function createNonDigitTokenizer(TokenConstructor){
     return function(char, tokens, digits){
-        const token = new TokenConstructor()
+        const token = new TokenConstructor();
         return ({
             tokens: digits.length === 0
                 ? tokens.concat(token)
                 : tokens.concat( tokenizeDigits(digits), token),
             digits: []
-        })
-    }
-}
+        });
+    };
+};
+
+/**
+ * Patterns:
+ * Keys are regular expressions.
+ * Values are functions of the current character, the tokens and the digits.
+ * They must return an object with keys { tokens, digits },
+ * coresponding to the new tokens and digits.
+ */
 
 const patterns = {
     '\\s': (whitespace, tokens, digits) => ({
@@ -43,9 +44,9 @@ const patterns = {
     '\\(': createNonDigitTokenizer(Token.OpenParenthesis),
     '\\)': createNonDigitTokenizer(Token.CloseParenthesis),
     '.': (char) => {
-        throw new Error(`invalid character:'${char}'`);
+        throw new LexError(char);
     }
-}
+};
 
 function tokenize(expression){
     const { tokens, digits } = expression.split('').reduce(
@@ -58,7 +59,8 @@ function tokenize(expression){
     , { tokens: [], digits: [] });
     return digits.length > 0
         ? tokens.concat(tokenizeDigits(digits))   
-        : tokens;
+        : tokens
+    ;
 };
 
 /**
