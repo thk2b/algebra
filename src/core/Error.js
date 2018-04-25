@@ -10,6 +10,7 @@ export class InvalidOperation extends ParseError {
         super(token, `Invalid operation: ${token.operator}: ${details}`)
     }
 }
+
 export class MissingExpression extends ParseError {
     constructor(token){
         super(token, 'Expected Expression')

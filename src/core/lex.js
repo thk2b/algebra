@@ -1,29 +1,25 @@
 import Token from './Token'
 
 function isWhitespace(char){
-    return /\s/.test(char)
+    return /\s/.test(char);
 };
 
 function isDigit(char){
     return /[\d\.]/.test(char);
 }
 
-function isSign(char){
-    return /[\-+]/.test(char);
-}
-
 function isBinaryOperation(char){
     return /[+\-*\//]/.test(char);
-}
+};
 
 function isParenthesis(char){
-    return /[\(\)]/.test(char)
-}
+    return /[\(\)]/.test(char);
+};
 
 function tokenizeDigits(digits){
     const rawNumber = digits.splice(0, digits.length).join('');
     return new Token._Number(Number.parseFloat(rawNumber));
-}
+};
 
 /** 
  * Takes an input string and returns a list of tokens.
@@ -74,7 +70,7 @@ function tokenize(expression){
             continue;
         }
         else {
-            throw new Error(`invalid character at position ${index}:${char}`);
+            throw new Error(`invalid character at position ${index}:'${char}'`);
         };
     };
     if(digits.length){
