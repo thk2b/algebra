@@ -67,9 +67,14 @@ function findCloseParensIndex(tokens, openParensIndex){
     return index === -1 ? index : index + openParensIndex + 1;
 };
 
+/**
+ * [Function(token) => false || Function(root, leaf)]
+ * Array of functions that take a token and its index. If the function cannot handle the token, return false.
+ * Otherwise return a function that takes the root and leaf of the syntax tree and all tokens.
+ */
 const expectedTokens = [
     function number(token){
-        if(token instanceof Token._Number) return function(root, leaf){
+        if(token instanceof Token._Number) return function parseNumber(root, leaf){
             const node = new Node(token);
             if(leaf === null){
                 return { root: node, leaf: node };
@@ -80,7 +85,7 @@ const expectedTokens = [
         return false;
     },
     function binaryOperation(token){
-        if(token instanceof Token.BinaryOperation) return function(root, leaf){
+        if(token instanceof Token.BinaryOperation) return function parseBinaryOperation(root, leaf){
             if(root === null) throw new ParseError.InvalidOperation(token, 'Missing left expression')
             if((root.value instanceof Token.BinaryOperation) && token.precedence > root.value.precedence){
                 const node = new Node(token);
@@ -94,7 +99,7 @@ const expectedTokens = [
         return false;
     },
     function openParenthesis(token, index){
-        if(token instanceof Token.OpenParenthesis) return function(root, leaf, tokens){
+        if(token instanceof Token.OpenParenthesis) return function parseOpenParenthesis(root, leaf, tokens){
             const closingParenthesisIndex = findCloseParensIndex(tokens, index);
             if(closingParenthesisIndex === -1){
                 throw new ParseError.UnmatchedParenthesis(token);
