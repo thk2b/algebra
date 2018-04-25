@@ -72,5 +72,11 @@ test('/calculate', main => {
             t.equal(calculate('10(2+2)'), 40);
             t.end();
         });
+        t.test('├─ division by 0', t => {
+            t.throws(
+                () => calculate('10/0')
+            );
+            t.end();
+        })
     });
 });
