@@ -16,12 +16,24 @@ function tokenizeDigits(digits){
 
 function concatWithDigits(token, tokens, digits){
     return digits.length === 0
-        ? tokens.concat(token)
-        : tokens.concat(
-            tokenizeDigits(digits),
-            token
-        );
+    ? tokens.concat(token)
+    : tokens.concat(
+        tokenizeDigits(digits),
+        token
+    );
 };
+
+function createNonDigitTokenizer(TokenConstructor){
+    return function(char, tokens, digits){
+        const token = new TokenConstructor()
+        return ({
+            tokens: digits.length === 0
+                ? tokens.concat(token)
+                : tokens.concat( tokenizeDigits(digits), token),
+            digits: []
+        })
+    }
+}
 
 const patterns = {
     '\\s': (whitespace, tokens, digits) => ({
@@ -33,30 +45,12 @@ const patterns = {
     '[\\d\\.]': (digit, tokens, digits) => ({
         tokens, digits: digits.concat(digit)
     }),
-    '\\+': (binaryOperator, tokens, digits) => ({
-        tokens: concatWithDigits(new Token.Addition(), tokens, digits),
-        digits: []
-    }),
-    '\\-': (binaryOperator, tokens, digits) => ({
-        tokens: concatWithDigits(new Token.Substraction(), tokens, digits),
-        digits: []
-    }),
-    '\\/': (binaryOperator, tokens, digits) => ({
-        tokens: concatWithDigits(new Token.Division(), tokens, digits),
-        digits: []
-    }),
-    '\\*': (binaryOperator, tokens, digits) => ({
-        tokens: concatWithDigits(new Token.Multiplication(), tokens, digits),
-        digits: []
-    }),
-    '\\(': (parenthesis, tokens, digits) => ({
-        tokens: concatWithDigits(new Token.OpenParenthesis(), tokens, digits),
-        digits: []
-    }),
-    '\\)': (parenthesis, tokens, digits) => ({
-        tokens: concatWithDigits(new Token.CloseParenthesis(), tokens, digits),
-        digits: []
-    }),
+    '\\+': createNonDigitTokenizer(Token.Addition),
+    '\\-': createNonDigitTokenizer(Token.Substraction),
+    '\\/': createNonDigitTokenizer(Token.Division),
+    '\\*': createNonDigitTokenizer(Token.Multiplication),
+    '\\(': createNonDigitTokenizer(Token.OpenParenthesis),
+    '\\)': createNonDigitTokenizer(Token.CloseParenthesis),
     '.': (char) => {
         throw new Error(`invalid character:'${char}'`);
     }
@@ -65,14 +59,15 @@ const patterns = {
 function tokenize(expression){
     const { tokens, digits } = expression.split('').reduce(
         ({ tokens, digits }, char, index) => {
-            return Object.entries(patterns)
-                .find(([ pattern, _ ]) => new RegExp(pattern).test(char))
-                [1](char, tokens, digits);
+            const [ _, tokenizer ] = Object.entries(patterns).find(
+                ([ pattern, _ ]) => new RegExp(pattern).test(char)
+            );
+            return tokenizer(char, tokens, digits);
         }
     , { tokens: [], digits: [] });
-    return digits.length === 0
-        ? tokens    
-        : tokens.concat(tokenizeDigits(digits));
+    return digits.length > 0
+        ? tokens.concat(tokenizeDigits(digits))   
+        : tokens;
 };
 
 /**
