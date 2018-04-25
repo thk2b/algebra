@@ -17,14 +17,8 @@ test('core/parse', main => {
     main.test('├ negative number', t => {
         const tokens = lex('-1');
         const root = parse(tokens);
-        const walk = Array.from(root);
-        t.deepEqual(walk, [
-            { operator: '*', precedence: 1 },
-            { value: -1 },
-            { value: 1 },
-        ])
-        t.ok(root instanceof Node);
-        t.ok(root.value instanceof Token.Multiplication);
+        t.ok(root.value instanceof Token._Number);
+        t.equal(root.value.value, -1);
         t.end();
     });
 
@@ -85,15 +79,22 @@ test('core/parse', main => {
             t.end();
         });
         t.test('├─ -a / -b', t => {
-            // currently doing this '-1*4/-1*2' ; 
             const root = parse(lex('-4/-2'));
             const walk = Array.from(root)
             t.deepEqual(walk, [
                 { operator: '/', precedence: 1 },
-                { operator: '*', precedence: 1 },
-                { value: -1 }, { value: 4 },
-                { operator: '*', precedence: 1 },
-                { value: -1 }, { value: 2 },
+                { value: -4 },
+                { value: -2 },
+            ]);
+            t.end();
+        });
+        t.test('├─ -a -b', t => {
+            const root = parse(lex('-1-2'));
+            const walk = Array.from(root)
+            t.deepEqual(walk, [
+                { operator: '-', precedence: 0 },
+                { value: -1 },
+                { value: 2 },
             ]);
             t.end();
         });

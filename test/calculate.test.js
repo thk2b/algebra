@@ -47,6 +47,7 @@ test('/calculate', main => {
         });
         t.test('├─ with multiple mixed operands', t => {
             t.equal(calculate('-1+2'), 1, '1');
+            t.equal(calculate('-1+2-3+4-5+6+10'), 13, '1');
             t.equal(calculate('-1-2'), -3, '1');
             t.equal(calculate('-1*2'), -2, '1');
             t.equal(calculate('20/-1'), -20);

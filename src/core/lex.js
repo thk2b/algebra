@@ -87,20 +87,25 @@ function tokenize(expression){
  * Analyzes tokens and transforms them based on their relation to other tokens.
  * @param {{Token}} tokens – Tokens to analyze and transform
  */
-function transformTokens(tokens){
+function transformTokens(_tokens){
+    const tokens = _tokens.slice();
     return tokens.reduce((transformedTokens, token, index) => {
         if(token instanceof Token.Substraction){
-            const left = tokens[index - 1];
-            const right = tokens[index + 1];
-            if(left === undefined ||
-                (left instanceof Token.BinaryOperation) ||
-                (left instanceof Token.OpenParenthesis)
+            const prev = transformedTokens[index - 1];
+            const next = tokens[index + 1];
+            if(prev === undefined ||
+                (prev instanceof Token.BinaryOperation) ||
+                (prev instanceof Token.OpenParenthesis)
             ){
                 /* Negative number: match any expression begining with a substraction or any binary operation followed by a substraction.*/
-                multiplication.precedence = 1.5; // prevents -a/-b from being parsed as -1*a/-1*b. Instead, it is parsed as (-1*a)/(-1*b)
-                return transformedTokens.concat(
-                    new Token._Number(-1), multiplication
-                )
+                if(next instanceof Token._Number){
+                    tokens.splice(index + 1, 1); // remove the number
+                    return transformedTokens.concat(new Token._Number(-1 * next.value));
+                } else if (next instanceof Token.OpenParenthesis){
+                    // multiply the whole expression by -1
+                    return transformedTokens.concat(new Token.Number, new Token.Multiplication());
+                }
+                return transformedTokens.concat(token);
             }
         }
         

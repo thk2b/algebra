@@ -33,13 +33,9 @@ test('core/lex', main => {
                 t.end();
             });
             t.test('├── negative number', t => {
-                const tokens = lex('-1234.5678');
-                t.equal(tokens.length, 3, 'should lex 3 tokens');
-                t.ok(tokens[0] instanceof Token._Number, '0 should be a _Number');
-                t.equal(tokens[0].value, -1);
-                t.ok(tokens[1] instanceof Token.Multiplication, '1 should be a Multiplication');
-                t.ok(tokens[2] instanceof Token._Number, '2 should be a _Number');
-                t.equal(tokens[2].value, 1234.5678);
+                const [ token ] = lex('-1234.5678');
+                t.equal(token.value, -1234.5678);
+                t.ok(token instanceof Token._Number);
                 t.end();
             });
         })
@@ -64,33 +60,38 @@ test('core/lex', main => {
                     t.end();
                 });
                 t.test('├─── interpreted as a multiplication by -1 when at the start of expression', t => {
-                    const tokens = lex('-1');
-                    t.equal(tokens.length, 3, 'should lex 3 tokens');
-                    t.ok(tokens[0] instanceof Token._Number, '0 should be a _Number');
-                    t.equal(tokens[0].value, -1);
-                    t.ok(tokens[1] instanceof Token.Multiplication, '1 should be a Multiplication');
-                    t.ok(tokens[2] instanceof Token._Number, '2 should be a _Number');
-                    t.equal(tokens[2].value, 1);
+                    const [ token ] = lex('-1234.5678');
+                    t.equal(token.value, -1234.5678);
+                    t.ok(token instanceof Token._Number);
                     t.end();
                 });
                 t.test('├─── interpreted as a multiplication by -1 following another operator', t => {
                     const tokens = lex('1+-2');
-                    t.equal(tokens.length, 5, 'should find 5 tokens');
+                    t.equal(tokens.length, 3, 'should find 3 tokens');
                     t.deepEqual(tokens, [
                         { value: 1}, { operator: '+', precedence: 0 },
-                        { value: -1 }, { operator: '*', precedence: 1 },
-                        { value: 2 }
+                        { value: -2 }
                     ])
+                    t.end();
+                });
+                t.test('├─ -a -b', t => {
+                    const tokens = lex('-1-2')
+                    t.deepEqual(tokens, [
+                        { value: -1 },
+                        { operator: '-', precedence: 0 },
+                        { value: 2 },
+                    ]);
                     t.end();
                 });
                 t.test('├─── interpreted as a multiplication by -1 following an open parenthesis', t => {
                     const tokens = lex('0*(-1+2)');
-                    t.equal(tokens.length, 9, 'should find 9 tokens');
+                    t.equal(tokens.length, 7, 'should find 9 tokens');
                     t.deepEqual(tokens, [
                         { value: 0}, { operator: '*', precedence: 1 },
                         {}, 
-                        { value: -1 }, { operator: '*', precedence: 1 }, { value: 1 },
-                        { operator: '+', precedence: 0 }, { value: 2 },
+                        { value: -1 },
+                        { operator: '+', precedence: 0 },
+                        { value: 2 },
                         {}
                     ])
                     t.end();
@@ -129,9 +130,9 @@ test('core/lex', main => {
                 t.test('├─── negative division', t => {
                     const tokens = lex('-4/-2');
                     t.deepEqual(tokens, [
-                        { value: -1 }, { operator: '*', precedence: 1 }, { value: 4 },
+                        { value: -4 },
                         { operator: '/', precedence: 1 },
-                        { value: -1 }, { operator: '*', precedence: 1 }, { value: 2 }
+                        { value: -2 }
                     ]);
                     t.end();
                 });
