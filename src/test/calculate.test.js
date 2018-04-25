@@ -70,6 +70,8 @@ test('/calculate', main => {
             t.equal(calculate('10-(-2*4)'), 18);
             t.equal(calculate('10(5)'), 50);
             t.equal(calculate('10(-5)'), -50);
+            t.equal(calculate('10-(-5)'), 15);
+            t.equal(calculate('10(2(1+2))-(-5)'), 65);
             t.equal(calculate('10(2+2)'), 40);
             t.end();
         });
