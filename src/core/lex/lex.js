@@ -20,13 +20,11 @@ function createNonDigitTokenizer(TokenConstructor){
 };
 
 /**
- * Patterns:
- * Keys are regular expressions.
- * Values are functions of the current character, the tokens and the digits.
- * They must return an object with keys { tokens, digits },
- * coresponding to the new tokens and digits.
+ * {pattern<String> : tokenizer<Function(character, tokens, digits)>}
+ * Patterns are regular expression strings.
+ * Tokenizers are functions of the current character, the tokens and the digits.
+ * They must return an object with keys { tokens, digits } coresponding to the new tokens and digits.
  */
-
 const patterns = {
     '\\s': (whitespace, tokens, digits) => ({
         tokens: digits.length === 0
@@ -48,8 +46,14 @@ const patterns = {
     }
 };
 
+/**
+ * {name<String> : transformation<Function(tokens, token, index)>}
+ * Transformations are functions of the tokens, current token an index of the current token.
+ * Must returns the tokens, even if no changes were made.
+ * May remove or add tokens.
+ */
 const transformations = {
-    negativeNumbers(tokens, token, index){
+    negativeNumber(tokens, token, index){
         if(!(token instanceof Token.Substraction)) return tokens;
         const prev = tokens[index - 1];
         const next = tokens[index + 1];
@@ -89,6 +93,11 @@ const transformations = {
     }
 };
 
+/**
+ * For every character in the expression, finds the first pattern that matches and updates the 
+ * tokens and digits with the return value of the pattern's tokenizer.
+ * @param {String} expression 
+ */
 function tokenize(expression){
     const { tokens, digits } = expression.split('').reduce(
         ({ tokens, digits }, char, index) => {
@@ -105,12 +114,16 @@ function tokenize(expression){
 };
 
 /**
- * Analyzes tokens and transforms them based on their relation to other tokens.
+ * Runs all transformations on the tokens.
+ * For each transformation, run the transformation on each token.
+ * The token passed to transformations is taken from the tokens
+ * returned from the transformation of the previous token.
  * @param {{Token}} tokens – Tokens to analyze and transform
+ * @returns {[Token]} – Array of transformed tokens
  */
-function transformTokens(tokens){
+function transform(tokens){
     return Object.values(transformations).reduce(
-        (transformedTokens, transform) => {
+        (transformedTokens, transformation) => {
             return transformedTokens.reduce(
                 (transformingTokens, _, index) => {
                     /* Transformations can alter the number of tokens.
@@ -119,7 +132,7 @@ function transformTokens(tokens){
                     */
                     const offsetToken = transformingTokens[index];
                     if (offsetToken === undefined) return transformingTokens;
-                    return transform(transformingTokens, offsetToken, index);
+                    return transformation(transformingTokens, offsetToken, index);
                 }
             , transformedTokens);
         }
@@ -141,10 +154,15 @@ function transformTokens(tokens){
  *       add it to the list of tokens and check the next character.
  *     If the character is a parenthesis,
  *       add it to the list of tokens and check the next character.
- *    
+ * Then, transform the resulting tokens:
+ * For each token,
+ *  If the token is a substraction immediately following undefined, another binary operation, or an opening parenthesis,
+ *    and the next token is a number, (negative number) negate the number and remove the substraction from the tokens.
+ *  If the token is a number or a closing aprenthesis followed by an opening parenthesis, (implicit multiplication)
+ *    insert a multiplication between the token ans the opening parenthesis. 
  * @param {String} expression – Input expression.
  * @returns {[ Tokens ]} tokens - List of tokens.
  */
 export default function lex(expression){
-    return transformTokens(tokenize(expression));
+    return transform(tokenize(expression));
 };
