@@ -111,10 +111,15 @@ test('core/lex', main => {
                 t.test('├─── implicit multiplication', t => {
                     const tokens = lex('1(2 + 3)');
                     t.equal(tokens.length, 7, 'should add a Multiplication token');
-                    t.ok(tokens[0] instanceof Token._Number, '0 should be a _Number');
-                    t.ok(tokens[1] instanceof Token.Multiplication, '1 should be a Multiplication');
-                    t.ok(tokens[2] instanceof Token.OpenParenthesis, '2 should be an OpenParenthesis');
-                    t.ok(tokens[6] instanceof Token.CloseParenthesis, 'last token should be an CloseParenthesis');
+                    t.deepEqual(tokens, [
+                        { value: 1 },
+                        { operator: '*' , precedence: 1 },
+                        {},
+                        { value: 2 },
+                        { operator: '+' , precedence: 0 },
+                        { value: 3 },
+                        {}
+                    ])
                     t.end();
                 });
             });

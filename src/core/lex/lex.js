@@ -63,39 +63,54 @@ function tokenize(expression){
     ;
 };
 
+const transformations = {
+    negativeNumbers(tokens, token, index){
+        if(!(token instanceof Token.Substraction)) return tokens;
+        const prev = tokens[index - 1];
+        const next = tokens[index + 1];
+        if(prev === undefined ||
+            (prev instanceof Token.BinaryOperation) ||
+            (prev instanceof Token.OpenParenthesis)
+        ){
+            /* Negative number: match any expression begining with a substraction or any binary operation followed by a substraction.*/
+            if(next instanceof Token._Number) return [
+                ...tokens.slice(0, index),
+                new Token._Number(-1 * next.value),
+                ...tokens.slice(index + 2) // remove the number
+            ];
+            if (next instanceof Token.OpenParenthesis) return [
+                ...tokens.slice(0, index ),
+                new Token.Multiplication(),
+                ...tokens.slice(index )
+            ];
+        };
+        return tokens;
+    },
+    implicitMultiplication(tokens, token, index){
+        if ((token instanceof Token._Number) || (token instanceof Token.CloseParenthesis)){
+            const next = tokens[index + 1];
+            if(next instanceof Token.OpenParenthesis) return [
+                ...tokens.slice(0, index),
+                new Token.Multiplication(),
+                ...tokens.slice(index)
+            ];
+        };
+        return tokens;
+    }
+};
+
 /**
  * Analyzes tokens and transforms them based on their relation to other tokens.
  * @param {{Token}} tokens – Tokens to analyze and transform
  */
-function transformTokens(_tokens){
-    const tokens = _tokens.slice();
-    return tokens.reduce((transformedTokens, token, index) => {
-        if(token instanceof Token.Substraction){
-            const prev = transformedTokens[index - 1];
-            const next = tokens[index + 1];
-            if(prev === undefined ||
-                (prev instanceof Token.BinaryOperation) ||
-                (prev instanceof Token.OpenParenthesis)
-            ){
-                /* Negative number: match any expression begining with a substraction or any binary operation followed by a substraction.*/
-                if(next instanceof Token._Number){
-                    tokens.splice(index + 1, 1); // remove the number
-                    return transformedTokens.concat(new Token._Number(-1 * next.value));
-                } else if (next instanceof Token.OpenParenthesis){
-                    // multiply the whole expression by -1
-                    return transformedTokens.concat(new Token._Number, new Token.Multiplication());
-                }
-            }
+function transformTokens(tokens){
+    return Object.values(transformations).reduce(
+        (transformedTokens, transform) => {
+            return transformedTokens.reduce(
+                (transformingTokens, token, index) => transform(transformingTokens, token, index)
+            , transformedTokens);
         }
-        else if ((token instanceof Token._Number) || (token instanceof Token.CloseParenthesis)){
-            const next = tokens[index + 1];
-            if(next instanceof Token.OpenParenthesis){
-                // implicit multiplication
-                return transformedTokens.concat(token, new Token.Multiplication());
-            }
-        }
-        return transformedTokens.concat(token);
-    }, []);
+    , tokens);
 }
 
 /** 
