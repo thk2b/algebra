@@ -99,7 +99,7 @@ function transformTokens(_tokens){
                     return transformedTokens.concat(new Token._Number(-1 * next.value));
                 } else if (next instanceof Token.OpenParenthesis){
                     // multiply the whole expression by -1
-                    return transformedTokens.concat(new Token.Number, new Token.Multiplication());
+                    return transformedTokens.concat(new Token._Number, new Token.Multiplication());
                 }
             }
         }
