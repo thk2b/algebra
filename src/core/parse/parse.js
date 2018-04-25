@@ -2,24 +2,6 @@ import { Token } from '../lex';
 import Node from './Node';
 import ParseError from './ParseError';
 
-const precedence = {
-    '+': 0, '-': 0, '*': 1, '/': 1
-}
-
-function findCloseParensIndex(tokens, openParensIndex){
-    let openParensCount = 0;
-    const index = tokens.slice(openParensIndex + 1).findIndex( token => {
-        if(token instanceof Token.CloseParenthesis){
-            if(openParensCount === 0) return true;
-            openParensCount -= 1;
-        } else if (token instanceof Token.OpenParenthesis){
-            openParensCount += 1;
-        }
-        return false;
-    });
-    return index === -1 ? index : index + openParensIndex + 1;
-};
-
 /**
  * Transforms tokens into a syntax tree.
  * Algorithm:
@@ -45,86 +27,102 @@ function findCloseParensIndex(tokens, openParensIndex){
  *     Check the token that immediately follows the closing parenthesis.
  * @param {*} tokens – lexer tokens
  */
-
 export default function parse(tokens){
-    let root = null;
-    let leaf = root;
-
-    let index = 0;
-    while(index < tokens.length){
-        let token = tokens[index];
-        if(token instanceof Token._Number){
-            if(leaf === null){
-                root = new Node(token);
-            } else {
-                leaf.add(new Node(token));
+    const _tokens = tokens.slice();
+    const { root, leaf } = _tokens.reduce(
+        (tree, token, index) => {
+            for(let expectedToken of expectedTokens){
+                const parseToken = expectedToken(token, index);
+                if(parseToken) return parseToken(tree.root, tree.leaf, _tokens);
             };
-            leaf = root;
-            index += 1;
-            continue;
-        }
-        else if(token instanceof Token.BinaryOperation){
-            if(root === null){
-                throw new ParseError.InvalidOperation(token, 'Missing left expression.')
+            if(token instanceof Token.CloseParenthesis){
+                throw new ParseError.UnmatchedParenthesis(token);
             } else {
-                if((root.value instanceof Token.BinaryOperation) && token.precedence > root.value.precedence){
-                    // high precedence: we keep the same root, and insert the operator below it.
-                    const node = root.insertRight(new Node(token));
-                    leaf = node;
-                } else {
-                    // low precedence: we replace the root and attach the current root
-                    root = new Node(token, root);
-                    leaf = root;
-                };
-                index += 1;
-                continue;
-            }
+                throw new ParseError.ParseError(token);
+            };
         }
-        else if(token instanceof Token.OpenParenthesis){
-            /*
-            ** Create a subtree with the tokens from here to the closing parens.
-            ** Remove all the tokens from the list, since we have parsed them already.
-            ** Remove the closing parens.
-            ** Attach the subtree to the leaf.
-            */
+    , { root: null, leaf: null });
+    if(root === null){
+        throw new ParseError.MissingExpression();
+    };
+    if(root.count === 1){
+        if(root.value instanceof Token.BinaryOperation){
+            throw new ParseError.InvalidOperation(root);
+        };
+    };
+    return root;
+};
+
+function findCloseParensIndex(tokens, openParensIndex){
+    let openParensCount = 0;
+    const index = tokens.slice(openParensIndex + 1).findIndex( token => {
+        if(token instanceof Token.CloseParenthesis){
+            if(openParensCount === 0) return true;
+            openParensCount -= 1;
+        } else if (token instanceof Token.OpenParenthesis){
+            openParensCount += 1;
+        }
+        return false;
+    });
+    return index === -1 ? index : index + openParensIndex + 1;
+};
+
+/**
+ * [Function(token) => false || Function(root, leaf)]
+ * Array of functions that take a token and its index. If the function cannot handle the token, return false.
+ * Otherwise return a function that takes the root and leaf of the syntax tree and all tokens.
+ */
+const expectedTokens = [
+    function number(token){
+        if(token instanceof Token._Number) return function parseNumber(root, leaf){
+            const node = new Node(token);
+            if(leaf === null){
+                return { root: node, leaf: node };
+            };
+            leaf.add(node);
+            return { root, leaf: root };
+        }
+        return false;
+    },
+    function binaryOperation(token){
+        if(token instanceof Token.BinaryOperation) return function parseBinaryOperation(root, leaf){
+            if(root === null) throw new ParseError.InvalidOperation(token, 'Missing left expression')
+            if((root.value instanceof Token.BinaryOperation) && token.precedence > root.value.precedence){
+                const node = new Node(token);
+                root.insertRight(node);
+                return { root, leaf: node };
+            } else {
+                const newRoot = new Node(token, root);
+                return { root: newRoot, leaf: newRoot };
+            };
+        };
+        return false;
+    },
+    function openParenthesis(token, index){
+        if(token instanceof Token.OpenParenthesis) return function parseOpenParenthesis(root, leaf, tokens){
             const closingParenthesisIndex = findCloseParensIndex(tokens, index);
             if(closingParenthesisIndex === -1){
                 throw new ParseError.UnmatchedParenthesis(token);
             };
             const subtreeStartIndex = index + 1;
             const subtreeLength = closingParenthesisIndex - subtreeStartIndex;
-            
             const subExpressionTokens = tokens.slice(index + 1, index + 1 + subtreeLength);
             if(subExpressionTokens.length === 0){
                 throw new ParseError.MissingExpression();
             };
+
             const subtreeRoot = parse(subExpressionTokens);
             if(subtreeRoot.value instanceof Token.BinaryOperation){
                 subtreeRoot.value.precedence = 1;
             }
+
+            tokens.splice(index, subtreeLength + 1);
             if(root === null){
-                root = subtreeRoot;
-            } else {
-                leaf.add(subtreeRoot);
+                return { root: subtreeRoot, leaf: subtreeRoot };
             };
-            leaf = root;
-            index += subtreeLength + 2;
-            continue;
-        }
-        else {
-            if(token instanceof Token.CloseParenthesis){
-                throw new ParseError.UnmatchedParenthesis(token)
-            } else {
-                throw new ParseError.ParseParseError(token)
-            };
+            leaf.add(subtreeRoot);
+            return { root, leaf: root };
         };
+        return false;
     }
-    if(root !== leaf || root === null){
-        throw new ParseError.MissingExpression()
-    } else if(root.count === 1){
-        if(root.value instanceof Token.BinaryOperation){
-            throw new ParseError.InvalidOperation(root)       
-        }
-    };
-    return root;
-}
+];
