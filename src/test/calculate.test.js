@@ -64,6 +64,7 @@ test('/calculate', main => {
             t.equal(calculate('1+2/-1'), -1);
             t.equal(calculate('1+4/2'), 3);
             t.equal(calculate('-4/-2'), 2);
+            t.equal(calculate('-4/-2(-4/(1-2))'), 8);
             t.equal(calculate('2-4/-2'), 4);
             t.equal(calculate('(1+5)*2'), 12);
             t.equal(calculate('10-(-2*4)'), 18);

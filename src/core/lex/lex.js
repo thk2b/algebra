@@ -48,21 +48,6 @@ const patterns = {
     }
 };
 
-function tokenize(expression){
-    const { tokens, digits } = expression.split('').reduce(
-        ({ tokens, digits }, char, index) => {
-            const [ _, tokenizer ] = Object.entries(patterns).find(
-                ([ pattern, _ ]) => new RegExp(pattern).test(char)
-            );
-            return tokenizer(char, tokens, digits);
-        }
-    , { tokens: [], digits: [] });
-    return digits.length > 0
-        ? tokens.concat(tokenizeDigits(digits))   
-        : tokens
-    ;
-};
-
 const transformations = {
     negativeNumbers(tokens, token, index){
         if(!(token instanceof Token.Substraction)) return tokens;
@@ -73,15 +58,18 @@ const transformations = {
             (prev instanceof Token.OpenParenthesis)
         ){
             /* Negative number: match any expression begining with a substraction or any binary operation followed by a substraction.*/
-            if(next instanceof Token._Number) return [
-                ...tokens.slice(0, index),
-                new Token._Number(-1 * next.value),
-                ...tokens.slice(index + 2) // remove the number
-            ];
+            if(next instanceof Token._Number) {
+                return [
+                    ...tokens.slice(0, index),
+                    new Token._Number(-1 * next.value),
+                    ...tokens.slice(index + 2) // remove the number
+                ];
+            }
             if (next instanceof Token.OpenParenthesis) return [
-                ...tokens.slice(0, index ),
+                ...tokens.slice(0, index),
+                new Token._Number(-1),
                 new Token.Multiplication(),
-                ...tokens.slice(index )
+                ...tokens.slice(index)
             ];
         };
         return tokens;
@@ -89,14 +77,31 @@ const transformations = {
     implicitMultiplication(tokens, token, index){
         if ((token instanceof Token._Number) || (token instanceof Token.CloseParenthesis)){
             const next = tokens[index + 1];
-            if(next instanceof Token.OpenParenthesis) return [
-                ...tokens.slice(0, index),
+            if(next instanceof Token.OpenParenthesis) {
+                return [
+                ...tokens.slice(0, index + 1),
                 new Token.Multiplication(),
-                ...tokens.slice(index)
-            ];
+                ...tokens.slice(index + 1)
+                ];
+            };
         };
         return tokens;
     }
+};
+
+function tokenize(expression){
+    const { tokens, digits } = expression.split('').reduce(
+        ({ tokens, digits }, char, index) => {
+            const [ _, tokenizer ] = Object.entries(patterns).find(
+                ([ pattern ]) => new RegExp(pattern).test(char)
+            );
+            return tokenizer(char, tokens, digits);
+        }
+    , { tokens: [], digits: [] });
+    return digits.length > 0
+        ? tokens.concat(tokenizeDigits(digits))   
+        : tokens
+    ;
 };
 
 /**
@@ -107,11 +112,19 @@ function transformTokens(tokens){
     return Object.values(transformations).reduce(
         (transformedTokens, transform) => {
             return transformedTokens.reduce(
-                (transformingTokens, token, index) => transform(transformingTokens, token, index)
+                (transformingTokens, _, index) => {
+                    /* Transformations can alter the number of tokens.
+                    ** If we removed a token, the current token (_) is one element ahead.
+                    ** So the correct token to pass to the transformation is the transformingTokens at the current index.
+                    */
+                    const offsetToken = transformingTokens[index];
+                    if (offsetToken === undefined) return transformingTokens;
+                    return transform(transformingTokens, offsetToken, index);
+                }
             , transformedTokens);
         }
     , tokens);
-}
+};
 
 /** 
  * Lexer. Takes an input string and returns a list of tokens.
