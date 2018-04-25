@@ -115,7 +115,7 @@ export default function parse(tokens){
             if(token instanceof Token.CloseParenthesis){
                 throw new ParseError.UnmatchedParenthesis(token)
             } else {
-                throw new ParseError.ParseParseError(token)
+                throw new ParseError.ParseError(token)
             };
         };
     }
