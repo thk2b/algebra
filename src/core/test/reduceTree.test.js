@@ -25,6 +25,21 @@ test('core/reduceTree', main => {
             ]);
             t.end();
         });
+        t.test('├─ division by 1', t => {
+            const node = reduceTree(parse(lex('20/10')));
+            t.ok(node.value instanceof Token.Division);
+            t.deepEqual(Array.from(node.walk()), [
+                { value: 2 }
+            ]);
+            t.end();
+        });
+        t.test('├─ division by 0', t => {
+            t.throws(
+                () => reduceTree(parse(lex('20/0'))),
+                ReductionError
+            );
+            t.end();
+        });
     });
     main.test('├ composed expressions', t => {
         t.test('├─ sum of divisions', t => {
@@ -98,6 +113,17 @@ test('core/reduceTree', main => {
                 { operator: '/', precedence: 1 },
                 { value: 34 },
                 { value: 15 },
+            ]);
+            t.end();
+        });
+        t.test('├─ 5', t => {
+            const node = reduceTree(parse(lex('3*10/30')));
+            t.deepEqual(Array.from(node.walk()), [
+                { operator: '*', precedence: 1 },
+                { value: 3 },
+                { operator: '/', precedence: 1 },
+                { value: 1 },
+                { value: 3 },
             ]);
             t.end();
         });
