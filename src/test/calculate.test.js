@@ -84,6 +84,8 @@ test('/calculate', main => {
             t.equal(calculate('10*2^2'), 40);
             t.equal(calculate('2*2^(2+1)'), 16);
             t.equal(calculate('5(10^2)(12-9)'), 1500);
+            t.equal(calculate('2/4/8'), 0.063);
+            t.equal(calculate('2/(4/8)'), 4);
             t.end();
         });
     });
