@@ -5,7 +5,7 @@ import { Token } from './lex';
 import { Node } from './parse';
 const { min, max, pow } = Math;
 
-class CalculationError {
+export class CalculationError {
     constructor(node, message){
         this.node = node;
         this.message = message;

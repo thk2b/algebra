@@ -1,6 +1,6 @@
 import test from 'tape';
 
-import calculateTree from '../calculateTree';
+import calculateTree, { CalculationError } from '../calculateTree';
 import { lex, parse, Node, Token } from '../';
 
 test('core/calculateTree', main => {
@@ -33,10 +33,30 @@ test('core/calculateTree', main => {
             t.deepEqual(node.value, { value: 5 });
             t.test('├── division by 0', t => {
                 t.throws(
-                    () => calculateTree(parse(lex('10/0')))
+                    () => calculateTree(parse(lex('10/0'))),
+                    CalculationError
                 );
                 t.end();
             });
+            t.end();
+        });
+        t.test('├─ nested operation', t => {
+            const node = calculateTree(parse(lex('10 / 2 + 5'))); 
+            t.ok(node instanceof Node);
+            t.ok(node.value instanceof Token._Number);
+            t.deepEqual(node.value, { value: 10 });
+            t.end();
+        })
+        t.test('├─ invalid operation', t => {
+            t.throws(
+                () => calculateTree(
+                    new Node(new Token.OpenParenthesis(), 
+                        new Node(new Token._Number(1)), 
+                        new Node(new Token._Number(1))
+                    )
+                ),
+                CalculationError
+            );
             t.end();
         });
         t.test('├─ with ^', t => {
