@@ -38,13 +38,13 @@ export default function calculateTree(root){
             break;
         case Token.Division:
             if(r === 0) throw new CalculationError(root, 'Cannot divide by zero');
-            value = round(l / r, max(precision(l), precision(r)));
+            value = round(l / r, max(options.precision, precision(l), precision(r)));
             break;
         case Token.Exponentiation:
             value = round(pow(l, r), max(precision(l), precision(r)));
             break;
         default:
             throw new CalculationError(root, 'Cannot calculate non-binary operation');
-    }
+    };
     return new Node(new Token._Number( value ));
-}
+};

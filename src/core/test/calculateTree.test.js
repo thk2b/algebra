@@ -50,5 +50,13 @@ test('core/calculateTree', main => {
             t.equal(calculateTree(parse(lex('1.11111 + 0'))).value.value, 1.11111);
             t.end()
         });
+        t.test('├── rounding', t => {
+            t.equal(calculateTree(parse(lex('2/3'))).value.value, 0.667, 'division should be rounded to 3 decimal places by default');
+            t.end();
+        });
+        t.test('├── precision', t => {
+            t.equal(calculateTree(parse(lex('1.11111 + 0'))).value.value, 1.11111, 'should be in the same precision as the most precise input');
+            t.end();
+        });
     });
 });
