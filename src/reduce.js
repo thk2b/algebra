@@ -1,5 +1,4 @@
-import { Division, _Number } from './core/token';
-import Node from './core/Node';
+import { Token, Node } from './core'
 
 /**
  * Returns a Node containing a Token.Division in lowest terms.
@@ -10,7 +9,7 @@ export default function reduce(divisionNode){
         throw new Error('cannot reduce a non-Node');
     };
     const division = divisionNode.value;
-    if(!division instanceof Division){
+    if(!division instanceof Token.Division){
         throw new Error('cannot reduce a non-Division');
     };
 
