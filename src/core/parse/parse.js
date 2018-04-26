@@ -113,7 +113,7 @@ const expectedTokens = [
 
             const subtreeRoot = parse(subExpressionTokens);
             if(subtreeRoot.value instanceof Token.BinaryOperation){
-                subtreeRoot.value.precedence = 1;
+                subtreeRoot.value.precedence += 1;
             }
 
             tokens.splice(index, subtreeLength + 1);

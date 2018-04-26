@@ -32,6 +32,10 @@ test('/calculate', main => {
             t.equal(calculate('2/3'), 0.667, 'should be rounded to 3 decimal places by default');
             t.end();
         });
+        t.test('├─ with ^', t => {
+            t.equal(calculate('2 ^ 2'), 4);
+            t.end();
+        });
         t.test('├─ result should always be in the same precision as the most precise input', t => {
             t.equal(calculate('1.11111 + 0'), 1.11111)
             t.end()
@@ -43,6 +47,9 @@ test('/calculate', main => {
             t.equal(calculate('3-2-1'), 0, '2');
             t.equal(calculate('1*2*3'), 6, '3');
             t.equal(calculate('12/2/3'), 2, '4');
+            t.equal(calculate('(3)^(4)'), 81);
+            t.equal(calculate('2 ^ 2 ^ 2 ^ 2'), 256);
+            t.equal(calculate('2 ^ ( 2 ^ ( 2 ^ 2 ))'), 65536);
             t.end();
         });
         t.test('├─ with multiple mixed operands', t => {
@@ -74,6 +81,10 @@ test('/calculate', main => {
             t.equal(calculate('10(2(1+2))-(-5)'), 65);
             t.equal(calculate('10(2+2)'), 40);
             t.equal(calculate('10(100)(1000)(-1)'), -1000000);
+            t.equal(calculate('2^(2+1)'), 8);
+            t.equal(calculate('2^2*10'), 40);
+            t.equal(calculate('10*2^2'), 40);
+            t.equal(calculate('2*2^(2+1)'), 16);
             t.end();
         });
         t.test('├─ division by 0', t => {

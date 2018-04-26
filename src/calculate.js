@@ -3,7 +3,7 @@ import { lex, parse, Token } from './core';
 import round from './util/round';
 import precision from './util/precision';
 import options from './options';
-const { min, max } = Math;
+const { min, max, pow } = Math;
 
 const operators = {
     '+': (l, r) => round(l + r, max(precision(l), precision(r))),
@@ -12,7 +12,8 @@ const operators = {
     '/': (l, r) => {
         if(r === 0) throw new Error('cannot divide by zero');
         return round(l / r, max(options.precision, precision(l), precision(r)));
-    }
+    },
+    '^': (l, r) => round(pow(l, r), max(precision(l), precision(r))),
 };
 
 function _calculate(node){

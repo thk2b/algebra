@@ -60,6 +60,16 @@ test('core/parse', main => {
             t.equal(root.right.value.value, 2.5);
             t.end();
         });
+        t.test('├─ exponentiation', t => {
+            const tokens = lex('2 ^ 4');
+            const root = parse(tokens);
+            t.ok(root.value instanceof Token.Exponentiation);
+            t.ok(root.left.value instanceof Token._Number, 'left should be a number');
+            t.equal(root.left.value.value, 2);
+            t.ok(root.right.value instanceof Token._Number, 'right should be a number');
+            t.equal(root.right.value.value, 4);
+            t.end();
+        });
     });
 
     main.test('├ more complex expressions', t => {
@@ -137,15 +147,15 @@ test('core/parse', main => {
         });
         t.test('├─ a + b * c ', t => {
             const root = parse(lex('1 + 20 * 3.5'));
-            const walk = Array.from(root)
+            const walk = Array.from(root);
             t.deepEqual(walk, [
                 { operator: '+', precedence: 0 },
                 { value: 1 },
                 { operator: '*', precedence: 1 },
                 { value: 20 },
                 { value: 3.5 }
-            ])
-            t.end()
+            ]);
+            t.end();
         });
         t.test('├─ a + b * c - e / f', t => {
             const root = parse(lex('1 + 20 * 3.5 - 4 / 5'));
@@ -160,6 +170,44 @@ test('core/parse', main => {
                 { operator: '/', precedence: 1 },
                 { value: 4 },
                 { value: 5 },
+            ]);
+            t.end();
+        });
+        t.test('├─ a ^ b + c ', t => {
+            const root = parse(lex('4 + 2 ^ 3'));
+            const walk = Array.from(root);
+            t.deepEqual(walk, [
+                { operator: '+', precedence: 0 },
+                { value: 4 },
+                { operator: '^', precedence: 2 },
+                { value: 2 },
+                { value: 3 }
+            ]);
+            t.end();
+        });
+        t.test('├─ a * b ^ c ', t => {
+            const root = parse(lex('4 * 2 ^ 3'));
+            const walk = Array.from(root);
+            t.deepEqual(walk, [
+                { operator: '*', precedence: 1 },
+                { value: 4 },
+                { operator: '^', precedence: 2 },
+                { value: 2 },
+                { value: 3 }
+            ]);
+            t.end();
+        });
+        t.test('├─ a ^ b ^ c ^ c', t => {
+            const root = parse(lex('2 ^ 2 ^ 2 ^ 2'));
+            const walk = Array.from(root);
+            t.deepEqual(walk, [
+                { operator: '^', precedence: 2 },
+                { operator: '^', precedence: 2 },
+                { operator: '^', precedence: 2 },
+                { value: 2 },
+                { value: 2 },
+                { value: 2 },
+                { value: 2 },
             ]);
             t.end();
         });
@@ -240,7 +288,7 @@ test('core/parse', main => {
             t.deepEqual(walk, [
                 { operator: '+', precedence: 0 },
                 { value: 1 },
-                { operator: '*', precedence: 1 },
+                { operator: '*', precedence: 2 },
                 { operator: '*', precedence: 1 },
                 { value: 2 },
                 { operator: '+', precedence: 1 },
@@ -251,6 +299,20 @@ test('core/parse', main => {
                 { value: 6 },
             ])
             t.end()
+        });
+        t.test('├─ a ^ (b ^ (c ^ d))', t => {
+            const root = parse(lex('2 ^ ( 2 ^ ( 2 ^ 2 ))'));
+            const walk = Array.from(root);
+            t.deepEqual(walk, [
+                { operator: '^', precedence: 2 },
+                { value: 2 },
+                { operator: '^', precedence: 3 },
+                { value: 2 },
+                { operator: '^', precedence: 3 },
+                { value: 2 },
+                { value: 2 },
+            ]);
+            t.end();
         });
         t.test('├─ wrapping the entire expression in parentheses', t => {
             const tokens = lex('(((10 / 2.5)))');
