@@ -73,6 +73,7 @@ test('/calculate', main => {
             t.equal(calculate('10-(-5)'), 15);
             t.equal(calculate('10(2(1+2))-(-5)'), 65);
             t.equal(calculate('10(2+2)'), 40);
+            t.equal(calculate('10(100)(1000)(-1)'), -1000000);
             t.end();
         });
         t.test('├─ division by 0', t => {

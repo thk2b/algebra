@@ -68,7 +68,7 @@ function findCloseParensIndex(tokens, openParensIndex){
 };
 
 /**
- * [Function(token) => false || Function(root, leaf)]
+ * [Function(token) => false || Function(root, leaf) => tree ]
  * Array of functions that take a token and its index. If the function cannot handle the token, return false.
  * Otherwise return a function that takes the root and leaf of the syntax tree and all tokens.
  */
