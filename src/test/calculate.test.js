@@ -31,6 +31,12 @@ test('/calculate', main => {
             t.equal(calculate('10 / 1.54321'), 6.48000);
             t.equal(calculate('2/3'), 0.667, 'should be rounded to 3 decimal places by default');
             t.end();
+            t.test('├── division by 0', t => {
+                t.throws(
+                    () => calculate('10/0')
+                );
+                t.end();
+            })
         });
         t.test('├─ with ^', t => {
             t.equal(calculate('2 ^ 2'), 4);
@@ -40,9 +46,7 @@ test('/calculate', main => {
             t.equal(calculate('1.11111 + 0'), 1.11111)
             t.end()
         });
-    });
-    main.test('├ operations', t => {
-        t.test('├─ with multiple times the same operand', t => {
+        t.test('├ operations', t => {
             t.equal(calculate('1+2+3'), 6, '1');
             t.equal(calculate('3-2-1'), 0, '2');
             t.equal(calculate('1*2*3'), 6, '3');
@@ -50,9 +54,6 @@ test('/calculate', main => {
             t.equal(calculate('(3)^(4)'), 81);
             t.equal(calculate('2 ^ 2 ^ 2 ^ 2'), 256);
             t.equal(calculate('2 ^ ( 2 ^ ( 2 ^ 2 ))'), 65536);
-            t.end();
-        });
-        t.test('├─ with multiple mixed operands', t => {
             t.equal(calculate('-1+2'), 1, '1');
             t.equal(calculate('-1+2-3+4-5+6+10'), 13, '1');
             t.equal(calculate('-1-2'), -3, '1');
@@ -63,9 +64,6 @@ test('/calculate', main => {
             t.equal(calculate('1.2345+2-3'), 0.2345, '1');
             t.equal(calculate('3*5/5'), 3, '2');
             t.equal(calculate('2*4+3.45'), 11.45, '3');
-            t.end();
-        });
-        t.test('├─ respects the order of operations', t => {
             t.equal(calculate('1+2*4'), 9);
             t.equal(calculate('1*2/1*2+1'), 5);
             t.equal(calculate('1+2/-1'), -1);
@@ -85,13 +83,8 @@ test('/calculate', main => {
             t.equal(calculate('2^2*10'), 40);
             t.equal(calculate('10*2^2'), 40);
             t.equal(calculate('2*2^(2+1)'), 16);
+            t.equal(calculate('5(10^2)(12-9)'), 1500);
             t.end();
         });
-        t.test('├─ division by 0', t => {
-            t.throws(
-                () => calculate('10/0')
-            );
-            t.end();
-        })
     });
 });
