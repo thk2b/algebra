@@ -159,6 +159,17 @@ test('core/lex', main => {
                     t.end();
                 });
             });
+            t.test('├── ^', t => {
+                const [ token ] = lex('^');
+                t.test('├─── operator', t => {
+                    t.ok(token);
+                    t.ok(token instanceof Token.BinaryOperation, 'should be a BinaryOperation');
+                    t.ok(token instanceof Token.Exponentiation, 'should be a Division');
+                    t.equal(token.operator, '^');
+                    t.equal(token.precedence, 2, 'should have the correct precedence');
+                    t.end();
+                });
+            });
         });
         t.test('├─ parentheses', t => {
             t.test('├── open', t => {

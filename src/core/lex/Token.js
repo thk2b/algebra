@@ -19,14 +19,21 @@ class BinaryOperation {
 class Addition extends BinaryOperation {
     constructor(){ super('+', 0); };
 };
+
 class Substraction extends BinaryOperation {
     constructor(){ super('-', 0); };
 };
+
 class Division extends BinaryOperation {
     constructor(){ super('/', 1); };
 };
+
 class Multiplication extends BinaryOperation {
     constructor(){ super('*', 1); };
+};
+
+class Exponentiation extends BinaryOperation {
+    constructor(){ super('^', 2); };
 };
 
 class OpenParenthesis {
@@ -39,6 +46,6 @@ class CloseParenthesis {
 export default {
     _Number,
     BinaryOperation,
-    Addition, Substraction, Division, Multiplication,
+    Addition, Substraction, Division, Multiplication, Exponentiation,
     OpenParenthesis, CloseParenthesis,
 }

@@ -57,6 +57,7 @@ const patterns = {
     '\\-': createNonDigitTokenizer(Token.Substraction),
     '\\/': createNonDigitTokenizer(Token.Division),
     '\\*': createNonDigitTokenizer(Token.Multiplication),
+    '\\^': createNonDigitTokenizer(Token.Exponentiation),
     '\\(': createNonDigitTokenizer(Token.OpenParenthesis),
     '\\)': createNonDigitTokenizer(Token.CloseParenthesis),
     '.': (char) => {
