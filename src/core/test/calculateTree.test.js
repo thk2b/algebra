@@ -3,7 +3,7 @@ import test from 'tape';
 import calculateTree from '../calculateTree';
 import { lex, parse, Node, Token } from '../';
 
-test('/calculateTree', main => {
+test('core/calculateTree', main => {
     main.test('├ basic operations', t => {
         t.test('├─ with +', t => {
             const node = calculateTree(parse(lex('1 + 1'))); 
