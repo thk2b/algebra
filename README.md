@@ -1,5 +1,5 @@
 # algebra
-An algebraic expression calculator
+A javascript algebra engine
 ```js
 import { calculate } from 'algebra'
 calculate('1+1') // => 2
