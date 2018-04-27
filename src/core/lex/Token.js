@@ -16,6 +16,7 @@ class BinaryOperation {
         return `Binary operation(${this.operator})`
     };
 };
+
 class Addition extends BinaryOperation {
     constructor(){ super('+', 0); };
 };
@@ -39,6 +40,7 @@ class Exponentiation extends BinaryOperation {
 class OpenParenthesis {
     print(){ return 'Opening parenthesis' }
 };
+
 class CloseParenthesis {
     print(){ return 'Closing parenthesis' }
 };
@@ -48,4 +50,4 @@ export default {
     BinaryOperation,
     Addition, Substraction, Division, Multiplication, Exponentiation,
     OpenParenthesis, CloseParenthesis,
-}
+};
