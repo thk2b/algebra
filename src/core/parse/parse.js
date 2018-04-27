@@ -25,7 +25,7 @@ import ParseError from './ParseError';
  *       Attatch the subtree to the leaf.
  *       The root becomes the leaf.
  *     Check the token that immediately follows the closing parenthesis.
- * @param {*} tokens – lexer tokens
+ * @param {[Token]} tokens – lexer tokens
  */
 export default function parse(tokens){
     const _tokens = tokens.slice();
