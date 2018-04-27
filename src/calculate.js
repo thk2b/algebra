@@ -1,4 +1,4 @@
-import { lex, parse , calculateTree } from './core';
+import { lex, parse , calculateTree, reduceTree } from './core';
 
 /**
  * 
@@ -6,9 +6,6 @@ import { lex, parse , calculateTree } from './core';
  */
 
 export default function calculate(expression){
-    // return calculateTree(
-    //     reduceTree(parse(lex(expression)))
-    // ).value.value;
     return calculateTree(
         parse(lex(expression))
     ).value.value;

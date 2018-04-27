@@ -15,6 +15,8 @@ export class ReductionError {
 };
 
 /**
+ * reduceTree
+ * 
  * Reduces an expression to lowest terms.
  * Algorithm:
  * Begin with a root Node.
@@ -45,14 +47,17 @@ export class ReductionError {
  *       The formula is (a/b)*(c/d) = (a*c)/(b*d).
  * Otherwise, the provided tree is invalid.
  * 
- * @param {Node} root – Syntax tree to be calculated
+ * @param {Node} root – Syntax tree to be reduced
  * @returns {Node} – A node containing either a Token._Number (Base case 1),
  *   or an ireducible Token.Division such that its left and right
  *   nodes are Token._Number and they have no common factor (Base case 2).
  */
 export default function reduceTree(root){
-    if(!(root instanceof Node)) throw new TypeError(`Expected a Node in calculateTree: got ${root}`);
+    if(!(root instanceof Node)){
+        throw new TypeError(`Expected a Node in calculateTree: got ${root}`);
+    };
     const token = root.value;
+    
     /* Base case 1: return a Node containing a Token._Number */
     if(token instanceof Token._Number) return root;
 
@@ -62,13 +67,15 @@ export default function reduceTree(root){
     const leftToken = leftNode.value;
     const rightToken = rightNode.value;
 
-    return (rightToken instanceof Token._Number)&&(leftToken instanceof Token._Number)
+    return (rightToken instanceof Token._Number) && (leftToken instanceof Token._Number)
         ? reduceNumbers(token, leftToken, rightToken)
         : reduceDivisions(token, leftNode, rightNode)
     ;
 };
 
 /**
+ * Reduce Numbers
+ * 
  * Executes the operation 
  * Returns a node containing Token._number or an ireducible Token.Division
  * 
@@ -83,39 +90,61 @@ function reduceNumbers(operationToken, leftToken, rightToken){
     let value;
     const l = leftToken.value;
     const r = rightToken.value;
+
     if(operationToken instanceof Token.Division){
-        if(r === 0) throw new ReductionError(operationToken, 'Cannot divide by zero');
+        if(r === 0){
+            throw new ReductionError(operationToken, 'Cannot divide by zero');
+        };
+
         const divisor = gcd(l, r);
         const newL = l / divisor;
         const newR = r / divisor;
-        if(newR === 1){
-            return new Node(new Token._Number(newL));
-        };
-        return new Node(new Token.Division,
-            new Node(new Token._Number(newL)),
-            new Node(new Token._Number(newR))
-        );
-    };
-    switch(operationToken.constructor){
-        case Token.Addition:
-            value = round(l + r, max(precision(l), precision(r)));
-            break;
-        case Token.Substraction:
-            value = round(l - r, max(precision(l), precision(r)));
-            break;
-        case Token.Multiplication:
-            value = round(l * r, max(precision(l), precision(r)));
-            break;
-        case Token.Exponentiation:
-            value = round(pow(l, r), max(precision(l), precision(r)));
-            break;
-        default:
+
+        return newR === 1
+            ? new Node(new Token._Number(newL))
+            : new Node(new Token.Division,
+                new Node(new Token._Number(newL)),
+                new Node(new Token._Number(newR))
+            )
+        ;
+    } else {
+        const places = max(precision(r), precision(l));
+        const value = operationToken instanceof Token.Addition
+            ? round(l + r, places)
+            : operationToken instanceof Token.Substraction
+            ? round(l - r, places)
+            : operationToken instanceof Token.Multiplication
+            ? round(l * r, places)
+            : operationToken instanceof Token.Exponentiation
+            ? round(pow(l, r), places)
+            : null
+        ;
+        if(value === null){
             throw new ReductionError(root, 'Cannot calculate non-binary operation');
+        };
+        return new Node(new Token._Number(value));
     };
-    return new Node(new Token._Number( value ));
-}
+};
 
 /**
+ * getNumeratorAndDenominator
+ * 
+ * If the node is a number, returns the number and 1.
+ * Otherwise, returns the numerator and denominator of the division.
+ * @param {Node} node – Node containing a Token.Number
+ * or Token.Division in lowest terms
+ * @returns {[Number, Number]} – Numerator and denominator.
+ */
+function getNumeratorAndDenominator(node){
+    return node.value instanceof Token._Number
+        ? [node.value.value, 1]
+        : [node.left.value.value, node.right.value.value]
+    ;
+};
+
+/**
+ * reduceDivisions
+ * 
  * Executes an operation which has at least one ireducible Token.Division as a value.
  * Returns a Token._Number or a Token.Division in lowest terms.
  * 
@@ -127,55 +156,42 @@ function reduceNumbers(operationToken, leftToken, rightToken){
  * @returns {Node}
  */
 function reduceDivisions(operationToken, leftNode, rightNode){
-    let a, b, c, d;
-    const leftToken = leftNode.value;
-    const rightToken = rightNode.value;
-    if(leftToken instanceof Token._Number){
-        a = leftToken.value;
-        b = 1;
-    } else {
-        a = leftNode.left.value.value;
-        b = leftNode.right.value.value;
+    const [ a, b ] = getNumeratorAndDenominator(leftNode);
+    const [ c, d ] = getNumeratorAndDenominator(rightNode);
+
+    if(b === 0 || d === 0){
+        throw new ReductionError(operationToken, 'Cannot divide by 0');
     };
-    if(rightToken instanceof Token._Number){
-        c = rightToken.value;
-        d = 1;
-    } else {
-        c = rightNode.left.value.value;
-        d = rightNode.right.value.value;
+
+    const places = max(...[a,b,c,d].map(precision));
+
+    const [ l, r ] = operationToken instanceof Token.Addition
+        /* (a/b)+(c/d) = (a*d+b*c)/(b*d) */
+        ? [ round(a * d + b * c, places), round(b * d, places) ]
+        : operationToken instanceof Token.Substraction
+        /* (a/b)-(c/d) = (a*d-b*c)/(b*d) */
+        ? [ round(a * d - b * c, places), round(b * d, places) ]
+        : operationToken instanceof Token.Multiplication
+        /* (a/b)*(c/d) = (a*c)/(b*d) */
+        ? [ round(a * c, places), round(b * d, places) ]
+        : operationToken instanceof Token.Division
+        /* (a/b)/(c/d) = (a*d)/(b*c) */
+        ? [ round(a * d, places), round(b * c, places) ]
+        : [ null, null ]
+    ;
+    if(l === null || r === null){
+        throw new ReductionError(root, 'Cannot calculate non-binary operation');
     };
-    let l, r;
-    switch(operationToken.constructor){
-        case Token.Addition:
-            /* (a/b)+(c/d) = (a*d+b*c)/(b*d) */
-            l = a * d + b * c;
-            r = b * d;
-            break;
-        case Token.Substraction:
-            /* (a/b)-(c/d) = (a*d-b*c)/(b*d) */
-            l = a * d - b * c;
-            r = b * d;
-            break;
-        case Token.Multiplication:
-            /* (a/b)*(c/d) = (a*c)/(b*d) */
-            l = a * c;
-            r = b * d;
-            break;
-        case Token.Division:
-            /* (a/b)/(c/d) = (a*d)/(b*c) */
-            l = a * d;
-            r = b * c;
-            break;
-        default: throw new ReductionError(root, 'Cannot calculate non-binary operation');
-    };
+
     const divisor = gcd(l, r);
     const newR = r / divisor;
     const newL = l / divisor;
-    if(newR === 1){
-        return new Node(new Token._Number(newL));
-    };
-    return new Node(new Token.Division,
-        new Node(new Token._Number(newL)),
-        new Node(new Token._Number(newR))
-    );
+
+    return newR === 1
+        ? new Node(new Token._Number(newL))
+        : new Node(new Token.Division,
+            new Node(new Token._Number(newL)),
+            new Node(new Token._Number(newR))
+        )
+    ;
 };
