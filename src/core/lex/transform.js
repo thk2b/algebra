@@ -27,7 +27,7 @@ export default function transform(tokens){
 };
 
 /**
- * {name<String> : transformation<Function(tokens, token, index)>}
+ * [Function(tokens, token, index), ...]
  * Transformations are functions of the tokens, current token an index of the current token.
  * Must returns the tokens, even if no changes were made.
  * May remove or add tokens.
