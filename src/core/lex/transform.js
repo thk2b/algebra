@@ -37,11 +37,16 @@ const transformations = [
         if(!(token instanceof Token.Substraction)) return tokens;
         const prev = tokens[index - 1];
         const next = tokens[index + 1];
+        /* Transform substractions that 
+         *   - are the first character of an expression
+         *   - follow a binary operation
+         *   - follow a closed parenthesis
+         * into a nugative number
+         */
         if(prev === undefined ||
             (prev instanceof Token.BinaryOperation) ||
             (prev instanceof Token.OpenParenthesis)
         ){
-            /* Negative number: match any expression begining with a substraction or any binary operation followed by a substraction.*/
             if(next instanceof Token._Number) {
                 return [
                     ...tokens.slice(0, index),
