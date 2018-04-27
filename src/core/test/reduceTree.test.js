@@ -27,7 +27,7 @@ test('core/reduceTree', main => {
         });
         t.test('├─ division by 1', t => {
             const node = reduceTree(parse(lex('20/10')));
-            t.ok(node.value instanceof Token.Division);
+            t.ok(node.value instanceof Token._Number);
             t.deepEqual(Array.from(node.walk()), [
                 { value: 2 }
             ]);
@@ -52,7 +52,7 @@ test('core/reduceTree', main => {
             t.end();
         });  
         t.test('├─ substraction of divisions', t => {
-            const node = reduceTree(parse(lex('(6/12))-(4/5)')));
+            const node = reduceTree(parse(lex('(6/12)-(4/5)')));
             t.deepEqual(Array.from(node.walk()), [
                 { operator: '/', precedence: 1 },
                 { value: -3 },
@@ -79,9 +79,9 @@ test('core/reduceTree', main => {
             t.end();
         });  
     });
-    t.test('more complex expresisons', t => {
+    main.test('more complex expresisons', t => {
         t.test('├─ 1', t => {
-            const node = reduceTree(parse(lex('(5+5/20)+(5/6)')));
+            const node = reduceTree(parse(lex('((5+5)/20)+(5/6)')));
             t.deepEqual(Array.from(node.walk()), [
                 { operator: '/', precedence: 1 },
                 { value: 4 },
@@ -90,7 +90,7 @@ test('core/reduceTree', main => {
             t.end();
         });  
         t.test('├─ 2', t => {
-            const node = reduceTree(parse(lex('(3+3/(6*2))-(2^2/5)')));
+            const node = reduceTree(parse(lex('((3+3)/(6*2))-(2^2/5)')));
             t.deepEqual(Array.from(node.walk()), [
                 { operator: '/', precedence: 1 },
                 { value: -3 },
@@ -108,7 +108,7 @@ test('core/reduceTree', main => {
             t.end();
         });  
         t.test('├─ 4', t => {
-            const node = reduceTree(parse(lex('(2+2/3*2)/(4+1/(5*2+7))')));
+            const node = reduceTree(parse(lex('((2+2)/(3*2))/((4+1)/(5*2+7))')));
             t.deepEqual(Array.from(node.walk()), [
                 { operator: '/', precedence: 1 },
                 { value: 34 },
@@ -119,11 +119,14 @@ test('core/reduceTree', main => {
         t.test('├─ 5', t => {
             const node = reduceTree(parse(lex('3*10/30')));
             t.deepEqual(Array.from(node.walk()), [
-                { operator: '*', precedence: 1 },
-                { value: 3 },
-                { operator: '/', precedence: 1 },
                 { value: 1 },
-                { value: 3 },
+            ]);
+            t.end();
+        });
+        t.test('├─ 6', t => {
+            const node = reduceTree(parse(lex('3*(10/30)')));
+            t.deepEqual(Array.from(node.walk()), [
+                { value: 1 },
             ]);
             t.end();
         });
