@@ -7,10 +7,10 @@ export default class Node {
     };
     _validate(node){
         if(node instanceof Node){
-            return node
-        }
-        throw new TypeError(`Invalid Node: ${node}`)
-    }
+            return node;
+        };
+        throw new TypeError(`Invalid Node: ${node}`);
+    };
     get count(){
         return [this.right, this.left].reduce(
             (count, child) => child === undefined ? count : count + 1
