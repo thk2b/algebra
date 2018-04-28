@@ -59,6 +59,21 @@ test('core/printTree', main => {
             printTree(parse(lex('(1+4)/(6^10-4)(8/9(2+3))'))),
             '(1+4)/(6^10-4)*(8/9*(2+3))'
         );
+        t.equal(
+            printTree(parse(lex('(1+1)/(2+2)(3+3)'))),
+            '(1+1)/(2+2)*(3+3)'
+        );
+        t.end();
+    });
+    main.test('├ custom separator', t => {
+        t.equal(
+            printTree(parse(lex('20/1')), ' '),
+            '20 / 1'
+        );
+        t.equal(
+            printTree(parse(lex('(2+3)/(5-4)')), '_'),
+            '(_2_+_3_)_/_(_5_-_4_)'
+        );
         t.end();
     });
 });
