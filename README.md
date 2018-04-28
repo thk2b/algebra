@@ -1,11 +1,11 @@
 # algebra
 A javascript algebra engine
 ```js
-import { calculate, reduce } from 'algebra'
+import { calculate, simplify } from 'algebra'
 calculate('1+1') // => 2
 calculate('5(10^2)(12-9)') // => 1500
 
-reduce('16/24') // => '2/3'
+simplify('16/24') // => '2/3'
 ```
 # Motivation
 The goal of this project is to parse and solve algebraic equations.
