@@ -61,7 +61,7 @@ export default function reduceTree(root){
     /* Base case 1: return a Node containing a Token._Number */
     if(token instanceof Token._Number) return root;
 
-    /* Base case 2: return a Node containing a Token.Division in lowest terms */
+    /* Base case 2: return a Node containing a Token.Division in lowest terms or a Token._Number*/
     const leftNode = reduceTree(root.left);
     const rightNode = reduceTree(root.right);
     const leftToken = leftNode.value;
