@@ -4,7 +4,7 @@ import gcd from '../util/gcd';
 import options from '../options';
 import { Token } from './lex';
 import { Node } from './parse';
-import { calculateTree } from '.';
+
 const { min, max, pow } = Math;
 
 export class ReductionError {
@@ -15,7 +15,7 @@ export class ReductionError {
 };
 
 /**
- * reduceTree
+ * simplifyTree
  * 
  * Reduces an expression to lowest terms.
  * Algorithm:
@@ -52,7 +52,7 @@ export class ReductionError {
  *   or an ireducible Token.Division such that its left and right
  *   nodes are Token._Number and they have no common factor (Base case 2).
  */
-export default function reduceTree(root){
+export default function simplifyTree(root){
     if(!(root instanceof Node)){
         throw new TypeError(`Expected a Node in calculateTree: got ${root}`);
     };
@@ -62,19 +62,19 @@ export default function reduceTree(root){
     if(token instanceof Token._Number) return root;
 
     /* Base case 2: return a Node containing a Token.Division in lowest terms or a Token._Number*/
-    const leftNode = reduceTree(root.left);
-    const rightNode = reduceTree(root.right);
+    const leftNode = simplifyTree(root.left);
+    const rightNode = simplifyTree(root.right);
     const leftToken = leftNode.value;
     const rightToken = rightNode.value;
 
     return (rightToken instanceof Token._Number) && (leftToken instanceof Token._Number)
-        ? reduceNumbers(token, leftToken, rightToken)
-        : reduceDivisions(token, leftNode, rightNode)
+        ? calculateTree(token, leftToken, rightToken)
+        : simplifyDivision(token, leftNode, rightNode)
     ;
 };
 
 /**
- * Reduce Numbers
+ * CalculateTree
  * 
  * Executes the operation 
  * Returns a node containing Token._number or an ireducible Token.Division
@@ -86,7 +86,7 @@ export default function reduceTree(root){
  * @param {Token} rightToken 
  * @returns {Node}
  */
-function reduceNumbers(operationToken, leftToken, rightToken){
+function calculateTree(operationToken, leftToken, rightToken){
     let value;
     const l = leftToken.value;
     const r = rightToken.value;
@@ -143,7 +143,7 @@ function getNumeratorAndDenominator(node){
 };
 
 /**
- * reduceDivisions
+ * simplifyDivision
  * 
  * Executes an operation which has at least one ireducible Token.Division as a value.
  * Returns a Token._Number or a Token.Division in lowest terms.
@@ -155,7 +155,7 @@ function getNumeratorAndDenominator(node){
  * @param {Node} rightNode
  * @returns {Node}
  */
-function reduceDivisions(operationToken, leftNode, rightNode){
+function simplifyDivision(operationToken, leftNode, rightNode){
     const [ a, b ] = getNumeratorAndDenominator(leftNode);
     const [ c, d ] = getNumeratorAndDenominator(rightNode);
 

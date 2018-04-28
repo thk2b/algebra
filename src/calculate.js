@@ -1,4 +1,4 @@
-import { lex, parse , calculateTree, reduceTree } from './core';
+import { lex, parse , calculateTree } from './core';
 
 /**
  * 
