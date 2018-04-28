@@ -14,9 +14,9 @@ test('/simplify', main => {
         t.end();
     });
     main.test('├─ operations', t => {
-        t.deepEqual(simplify('(10*20)/(5^5)'), '6/5');
-        t.deepEqual(simplify('(5+9)/(10-3))'), '1/2');
-        t.deepEqual(simplify('(15/5)/(100/10))'), '3/10');
+        t.deepEqual(simplify('(6^2)/(5*3*2)'), '6/5');
+        t.deepEqual(simplify('(10-3)/(5+9)'), '1/2');
+        t.deepEqual(simplify('(15/5)/(100/10)'), '3/10');
         t.deepEqual(simplify('(8/7)(14/9)'), '16/9');
         t.end();
     });
