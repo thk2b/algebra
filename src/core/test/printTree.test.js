@@ -1,57 +1,64 @@
 import test from 'tape';
 
+import { lex, parse, printTree } from '../';
+
 test('core/printTree', main => {
     main.test('├ basic tree', t => {
         t.equal(
-            printTree(lex(parse('1')))
-            , '1'
+            printTree(parse(lex('1'))),
+            '1'
         );
         t.equal(
-            printTree(lex(parse('1+1')))
-            , '1+1'
+            printTree(parse(lex('1+1'))),
+            '1+1'
         );
         t.equal(
-            printTree(lex(parse('1 + 1')))
-            , '1+1'
+            printTree(parse(lex('1 + 1'))),
+            '1+1'
         );
         t.equal(
-            printTree(lex(parse('1-1')))
-            , '1+1'
+            printTree(parse(lex('1-1'))),
+            '1-1'
         );
         t.equal(
-            printTree(lex(parse('2*1')))
-            , '1*1'
+            printTree(parse(lex('2*1'))),
+            '2*1'
         );
         t.equal(
-            printTree(lex(parse('20/1')))
-            , '20/1'
+            printTree(parse(lex('20/1'))),
+            '20/1'
         );
         t.equal(
-            printTree(lex(parse('20^1')))
-            , '20^1'
+            printTree(parse(lex('20^1'))),
+            '20^1'
         );
         t.end();
     });
     main.test('├ tree', t => {
         t.equal(
-            printTree(lex(parse('(2)(2)')))
-            , '2*2'
+            printTree(parse(lex('(2)(2)'))),
+            '2*2'
         );
         t.equal(
-            printTree(lex(parse('(2+3)(5-4)')))
-            , '(2+3)(5-4)'
+            printTree(parse(lex('(2+3)(5-4)'))),
+            '(2+3)*(5-4)'
         );
         t.equal(
-            printTree(lex(parse('((1--2)(2+3))(5-4)')))
-            , '((1--2)*(2+3))(5-4)'
+            printTree(parse(lex('(2+3)/(5-4)'))),
+            '(2+3)/(5-4)'
         );
         t.equal(
-            printTree(lex(parse('(2+3)/(5-4)')))
-            , '(2+3)/(5-4)'
+            printTree(parse(lex('(2*3)^(5/4)'))),
+            '(2*3)^(5/4)'
         );
         t.equal(
-            printTree(lex(parse('(2*3)^(5/4)')))
-            , '(2*3)^(5/4)'
+            printTree(parse(lex('((1--2)(2+3))(5-4)'))),
+            '(1--2)*(2+3)*(5-4)'
         );
+        t.equal(
+            printTree(parse(lex('(1+4)/(6^10-4)(8/9(2+3))'))),
+            '(1+4)/(6^10-4)*(8/9*(2+3))'
+        );
+        t.end();
     });
 });

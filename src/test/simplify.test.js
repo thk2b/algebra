@@ -18,5 +18,6 @@ test('/simplify', main => {
         t.deepEqual(simplify('(5+9)/(10-3))'), '1/2');
         t.deepEqual(simplify('(15/5)/(100/10))'), '3/10');
         t.deepEqual(simplify('(8/7)(14/9)'), '16/9');
+        t.end();
     });
 });

@@ -3,7 +3,7 @@ class _Number {
         this.value = value;
     };
     print(){
-        return `Number(${this.value})`
+        return this.value.toString();
     };
 };
 
@@ -13,7 +13,7 @@ class BinaryOperation {
         this.precedence = precedence;
     };
     print(){
-        return `Binary operation(${this.operator})`
+        return this.operator;
     };
 };
 
@@ -38,11 +38,11 @@ class Exponentiation extends BinaryOperation {
 };
 
 class OpenParenthesis {
-    print(){ return 'Opening parenthesis' }
+    print(){ return '(' }
 };
 
 class CloseParenthesis {
-    print(){ return 'Closing parenthesis' }
+    print(){ return ')' }
 };
 
 export default {
