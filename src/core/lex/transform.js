@@ -47,13 +47,13 @@ const transformations = [
             (prev instanceof Token.BinaryOperation) ||
             (prev instanceof Token.OpenParenthesis)
         ){
-            if(next instanceof Token._Number) {
+            if(next instanceof Token._Number){
                 return [
                     ...tokens.slice(0, index),
                     new Token._Number(-1 * next.value),
                     ...tokens.slice(index + 2) // remove the number
                 ];
-            }
+            };
             if (next instanceof Token.OpenParenthesis) return [
                 ...tokens.slice(0, index),
                 new Token._Number(-1),

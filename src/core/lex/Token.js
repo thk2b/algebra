@@ -11,6 +11,10 @@ class BinaryOperation {
     constructor(operator, precedence){
         this.operator = operator;
         this.precedence = precedence;
+        /* Signal that the operation is wrapped in parentheses.
+         * This flag is set by the parser, not the lexer.
+         */
+        this.isParenthesized = null;
     };
     print(){
         return this.operator;

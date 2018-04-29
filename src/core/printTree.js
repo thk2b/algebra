@@ -20,9 +20,9 @@ export default function printTree(root, separator=''){
 function printBinaryOperationChildNode(binaryOperationToken, node, separator){
     const token = node.value;
     return token instanceof Token.BinaryOperation
-        ? token.precedence <= binaryOperationToken.precedence
-        ? ['(', printTree(node, separator), ')'].join(separator)
-        : printTree(node, separator)
+        ? binaryOperationToken.isParenthesized || token.precedence < binaryOperationToken.precedence
+            ? ['(', printTree(node, separator), ')'].join(separator)
+            : printTree(node, separator)
         : token.print()
     ;
 };
