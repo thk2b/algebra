@@ -1,7 +1,7 @@
 export class MathError {
     constructor(token, message){
         this.token = token;
-        const prefix = `Math Error at '${token.print()}'`;
+        const prefix = 'Math Error';
         this.message = message
             ? `${prefix}: ${message}`
             : prefix
@@ -11,7 +11,7 @@ export class MathError {
 
 export class DivisionByZero extends MathError {
     constructor(divisionToken){
-        super(divisionToken);
+        super(divisionToken, 'Division by Zero');
     };
 };
 

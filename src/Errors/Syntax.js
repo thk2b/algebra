@@ -1,7 +1,7 @@
 export class SyntaxError {
     constructor(token, message){
         this.token = token;
-        const prefix = 'Syntax Error:'
+        const prefix = 'Syntax Error'
         if(message){
             this.message = `${prefix}: ${message}`;
         } else {
