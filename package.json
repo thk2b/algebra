@@ -1,6 +1,6 @@
 {
   "name": "@thk2b/algebra",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "An algebraic expression calculator",
   "main": "src/index.js",
   "scripts": {
