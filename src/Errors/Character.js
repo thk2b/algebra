@@ -15,8 +15,14 @@ export class UnknownCharacter extends CharacterError {
         super(char, 'Unknown character');
     };
 };
+export class InvalidNumber extends CharacterError {
+    constructor(char){
+        super(char, 'Invalid number');
+    };
+};
 
 export default {
     CharacterError,
-    UnknownCharacter
+    UnknownCharacter,
+    InvalidNumber
 };

@@ -50,7 +50,13 @@ const patterns = {
             : tokens.concat(tokenizeDigits(digits)),
         digits: []
     }),
-    '[\\d\\.]': (digit, tokens, digits) => ({
+    '\\.': (point, tokens, digits) => {
+        if(digits.length === 0){
+            throw new CharError.InvalidNumber(point);
+        };
+        return { tokens, digits: digits.concat(point) };
+    },
+    '\\d': (digit, tokens, digits) => ({
         tokens, digits: digits.concat(digit)
     }),
     '\\+': createNonDigitTokenizer(Token.Addition),

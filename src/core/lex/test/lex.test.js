@@ -38,7 +38,7 @@ test('core/lex', main => {
                 t.ok(token instanceof Token._Number);
                 t.end();
             });
-        })
+        });
         t.test('├─ binary operators', t => {
             t.test('├── +', t => {
                 const [ token ] = lex('+');
@@ -189,12 +189,21 @@ test('core/lex', main => {
                 t.end();
             });
         });
-        t.test('├─ invalid token', t => {
-            t.throws(
-                () => lex('@'),
-                CharError.UnknownCharacter
-            );
-            t.end();
+        t.test('├─ errors', t => {
+            t.test('├── invalid token', t => {
+                t.throws(
+                    () => lex('@'),
+                    CharError.UnknownCharacter
+                );
+                t.end();
+            });
+            t.test('├── decimal symbol not followed by numbers', t => {
+                t.throws(
+                    () => lex('.'),
+                    CharError.InvalidNumber
+                );
+                t.end();
+            });
         });
     });
     main.test('├ full expression ', t => {
