@@ -3,14 +3,8 @@ import precision from '../util/precision';
 import options from '../options';
 import { Token } from './lex';
 import { Node } from './parse';
+import Errors from '../Errors';
 const { min, max, pow } = Math;
-
-export class CalculationError {
-    constructor(node, message){
-        this.node = node;
-        this.message = message;
-    };
-};
 
 /**
  * Calculates the result of an expression.
@@ -37,14 +31,14 @@ export default function calculateTree(root){
             value = round(l * r, max(precision(l), precision(r)));
             break;
         case Token.Division:
-            if(r === 0) throw new CalculationError(root, 'Cannot divide by zero');
+            if(r === 0) throw new Errors.Math.DivisionByZero(root.value, 'Cannot divide by zero');
             value = round(l / r, max(options.precision, precision(l), precision(r)));
             break;
         case Token.Exponentiation:
             value = round(pow(l, r), max(precision(l), precision(r)));
             break;
         default:
-            throw new CalculationError(root, 'Cannot calculate non-binary operation');
+            throw new TypeError('Cannot calculate non-binary operation');
     };
     return new Node(new Token._Number( value ));
 };

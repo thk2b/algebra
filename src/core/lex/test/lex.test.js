@@ -1,7 +1,7 @@
 import test from 'tape-catch';
 
 import lex, { Token } from '../';
-import LexError from '../LexError';
+import CharError from '../../../Errors/Character';
 
 test('core/lex', main => {
     main.test('├ individual tokens', t => {
@@ -188,7 +188,7 @@ test('core/lex', main => {
         t.test('├─ invalid token', t => {
             t.throws(
                 () => lex('@'),
-                LexError
+                CharError.UnknownCharacter
             );
             t.end();
         });

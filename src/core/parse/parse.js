@@ -1,6 +1,6 @@
 import { Token } from '../lex';
 import Node from './Node';
-import ParseError from './ParseError';
+import _SyntaxError from '../../Errors/Syntax';
 
 /**
  * Transforms tokens into a syntax tree.
@@ -36,18 +36,18 @@ export default function parse(tokens){
                 if(parseToken) return parseToken(tree.root, tree.leaf, _tokens);
             };
             if(token instanceof Token.CloseParenthesis){
-                throw new ParseError.UnmatchedParenthesis(token);
+                throw new _SyntaxError.UnmatchedParenthesis(token);
             } else {
-                throw new ParseError.ParseError(token);
+                throw new _SyntaxError.SyntaxError(token);
             };
         }
     , { root: null, leaf: null });
     if(root === null){
-        throw new ParseError.MissingExpression();
+        throw new _SyntaxError.EmptyExpression();
     };
     if(root.count === 1){
         if(root.value instanceof Token.BinaryOperation){
-            throw new ParseError.InvalidOperation(root);
+            throw new _SyntaxError.MissingNumber(root.value);
         };
     };
     return root;
@@ -87,7 +87,7 @@ const expectedTokens = [
     },
     function binaryOperation(token){
         if(token instanceof Token.BinaryOperation) return function parseBinaryOperation(root, leaf){
-            if(root === null) throw new ParseError.InvalidOperation(token, 'Missing left expression')
+            if(root === null) throw new _SyntaxError.MissingNumber(token)
             if((root.value instanceof Token.BinaryOperation) && token.precedence > root.value.precedence){
                 const node = new Node(token);
                 root.insertRight(node);
@@ -103,13 +103,13 @@ const expectedTokens = [
         if(token instanceof Token.OpenParenthesis) return function parseOpenParenthesis(root, leaf, tokens){
             const closingParenthesisIndex = findCloseParensIndex(tokens, index);
             if(closingParenthesisIndex === -1){
-                throw new ParseError.UnmatchedParenthesis(token);
+                throw new _SyntaxError.UnmatchedParenthesis(token);
             };
             const subtreeStartIndex = index + 1;
             const subtreeLength = closingParenthesisIndex - subtreeStartIndex;
             const subExpressionTokens = tokens.slice(index + 1, index + 1 + subtreeLength);
             if(subExpressionTokens.length === 0){
-                throw new ParseError.MissingExpression();
+                throw new _SyntaxError.EmptyExpression();
             };
 
             const subtreeRoot = parse(subExpressionTokens);
@@ -125,5 +125,5 @@ const expectedTokens = [
             return { root, leaf: root };
         };
         return false;
-    }
+    },
 ];

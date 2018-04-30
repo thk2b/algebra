@@ -1,7 +1,7 @@
 import test from 'tape-catch';
 
 import { parse, Node, lex, Token } from '../../';
-import { ParseError } from '../';
+import _SyntaxError from '../../../Errors/Syntax';
 
 test('core/parse', main => {
     main.test('├ number', t => {
@@ -331,28 +331,35 @@ test('core/parse', main => {
             t.test('├── no left operand', t => {
                 t.throws(
                     () => parse(lex('* 2')),
-                    ParseError.InvalidOperation
+                    _SyntaxError.InvalidOperation
                 );
                 t.end();
             });
             t.test('├── two adjacent operands', t => {
                 t.throws(
                     () => parse(lex('2 * /')),
-                    ParseError.InvalidOperation
+                    _SyntaxError.InvalidOperation
                 );
                 t.end();
             });
             t.test('├── no right operand', t => {
                 t.throws(
                     () => parse(lex('2 + ')),
-                    ParseError.InvalidOperation
+                    _SyntaxError.MissingNumber
+                );
+                t.end();
+            });
+            t.test('├─ no left operand', t => {
+                t.throws(
+                    () => parse(lex('* 3')),
+                    _SyntaxError.MissingNumber
                 );
                 t.end();
             });
             t.test('├─ no operands', t => {
                 t.throws(
                     () => parse(lex('*')),
-                    ParseError.InvalidOperation
+                    _SyntaxError.MissingNumber
                 );
                 t.end();
             });
@@ -361,11 +368,11 @@ test('core/parse', main => {
             t.test('├── no closing parenthesis ', t => {
                 t.throws(
                     () => parse(lex('(1 - 2 ')),
-                    ParseError.UnmatchedParenthesis
+                    _SyntaxError.UnmatchedParenthesis
                 );
                 t.throws(
                     () => parse(lex('1 - ( 2 ')),
-                    ParseError.UnmatchedParenthesis,
+                    _SyntaxError.UnmatchedParenthesis,
                     'throws when missing parenthesis somwhere in the expresison'
                 );
                 t.end();
@@ -373,7 +380,7 @@ test('core/parse', main => {
             t.test('├── no opening parenthesis', t => {
                 t.throws(
                     () => parse(lex('1 - 2 )')),
-                    ParseError.UnmatchedParenthesis
+                    _SyntaxError.UnmatchedParenthesis
                 );
                 t.end();
             });
@@ -382,11 +389,11 @@ test('core/parse', main => {
             t.test('├── inside parentheses', t => {
                 t.throws(
                     () => parse(lex('()')),
-                    ParseError.MissingExpression
+                    _SyntaxError.EmptyExpression
                 );
                 t.throws(
                     () => parse(lex('1 + ()')),
-                    ParseError.MissingExpression,
+                    _SyntaxError.EmptyExpression,
                     'shoud throw when there are empty parens in the expression'
                 );
                 t.end();
@@ -394,7 +401,7 @@ test('core/parse', main => {
             t.test('├── empty input', t => {
                 t.throws(
                     () => parse(lex(' ')),
-                    ParseError.MissingExpression
+                    _SyntaxError.EmptyExpression
                 );
                 t.end();
             });

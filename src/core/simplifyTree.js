@@ -4,15 +4,9 @@ import gcd from '../util/gcd';
 import options from '../options';
 import { Token } from './lex';
 import { Node } from './parse';
+import Errors from '../Errors';
 
 const { min, max, pow } = Math;
-
-export class ReductionError {
-    constructor(node, message){
-        this.node = node;
-        this.message = message;
-    };
-};
 
 /**
  * simplifyTree
@@ -93,7 +87,7 @@ function calculateTree(operationToken, leftToken, rightToken){
 
     if(operationToken instanceof Token.Division){
         if(r === 0){
-            throw new ReductionError(operationToken, 'Cannot divide by zero');
+            throw new Errors.Math.DivisionByZero(operationToken);
         };
 
         const divisor = gcd(l, r);
@@ -120,7 +114,7 @@ function calculateTree(operationToken, leftToken, rightToken){
             : null
         ;
         if(value === null){
-            throw new ReductionError(root, 'Cannot calculate non-binary operation');
+            throw new TypeError('Cannot calculate non-binary operation');
         };
         return new Node(new Token._Number(value));
     };

@@ -1,5 +1,4 @@
 export { default as Token } from './Token'
-export { default as LexError } from './LexError'
 
 import transform from './transform';
 import tokenize from './tokenize';

@@ -1,5 +1,5 @@
 import Token from './Token';
-import LexError from './LexError';
+import CharError from '../../Errors/Character';
 
 /**
  * For every character in the expression, finds the first pattern that matches and updates the 
@@ -61,6 +61,6 @@ const patterns = {
     '\\(': createNonDigitTokenizer(Token.OpenParenthesis),
     '\\)': createNonDigitTokenizer(Token.CloseParenthesis),
     '.': (char) => {
-        throw new LexError(char);
-    }
+        throw new CharError.UnknownCharacter(char);
+    },
 };

@@ -2,6 +2,7 @@ import test from 'tape';
 
 import calculateTree, { CalculationError } from '../calculateTree';
 import { lex, parse, Node, Token } from '../';
+import Errors from '../../Errors'
 
 test('core/calculateTree', main => {
     main.test('├ basic operations', t => {
@@ -34,7 +35,7 @@ test('core/calculateTree', main => {
             t.test('├── division by 0', t => {
                 t.throws(
                     () => calculateTree(parse(lex('10/0'))),
-                    CalculationError
+                    Errors.Math.DivisionByZero
                 );
                 t.end();
             });
@@ -55,7 +56,7 @@ test('core/calculateTree', main => {
                         new Node(new Token._Number(1))
                     )
                 ),
-                CalculationError
+                TypeError
             );
             t.end();
         });

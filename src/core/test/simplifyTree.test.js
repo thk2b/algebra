@@ -2,6 +2,7 @@ import test from 'tape';
 
 import simplifyTree, { ReductionError } from '../simplifyTree';
 import { lex, parse, Node, Token } from '../';
+import MathError from '../../Errors/Math';
 
 test('core/simplifyTree', main => {
     main.test('├ basic expressions', t => {
@@ -36,7 +37,7 @@ test('core/simplifyTree', main => {
         t.test('├─ division by 0', t => {
             t.throws(
                 () => simplifyTree(parse(lex('20/0'))),
-                ReductionError
+                MathError.DivisionByZero
             );
             t.end();
         });
