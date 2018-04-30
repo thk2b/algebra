@@ -67,6 +67,12 @@ function findCloseParensIndex(tokens, openParensIndex){
     return index === -1 ? index : index + openParensIndex + 1;
 };
 
+function hasPrecedence(token1, token2){
+    return token1.isParenthesized 
+        || token1.precedence > token2.precedence
+    ;
+}
+
 /**
  * [Function(token) => false || Function(root, leaf) => tree ]
  * Array of functions that take a token and its index. If the function cannot handle the token, return false.
@@ -88,7 +94,9 @@ const expectedTokens = [
     function binaryOperation(token){
         if(token instanceof Token.BinaryOperation) return function parseBinaryOperation(root, leaf){
             if(root === null) throw new _SyntaxError.MissingNumber(token)
-            if((root.value instanceof Token.BinaryOperation) && token.precedence > root.value.precedence){
+            if((root.value instanceof Token.BinaryOperation) &&
+                (!root.value.isParenthesized && (token.precedence > root.value.precedence))
+            ){
                 const node = new Node(token);
                 root.insertRight(node);
                 return { root, leaf: node };
@@ -114,8 +122,8 @@ const expectedTokens = [
 
             const subtreeRoot = parse(subExpressionTokens);
             if(subtreeRoot.value instanceof Token.BinaryOperation){
-                subtreeRoot.value.precedence += 1;
-            }
+                subtreeRoot.value.isParenthesized = true;
+            };
 
             tokens.splice(index, subtreeLength + 1);
             if(root === null){

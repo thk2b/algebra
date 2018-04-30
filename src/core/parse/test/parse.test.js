@@ -77,9 +77,9 @@ test('core/parse', main => {
             const root = parse(lex('1*2/3*4'));
             const walk = Array.from(root)
             t.deepEqual(walk, [
-                { operator: '*', precedence: 1 },
-                { operator: '/', precedence: 1 },
-                { operator: '*', precedence: 1 },
+                { operator: '*', precedence: 1, isParenthesized: null },
+                { operator: '/', precedence: 1, isParenthesized: null },
+                { operator: '*', precedence: 1, isParenthesized: null },
                 { value: 1 }, { value: 2 },
                 { value: 3 }, { value: 4 },
             ]);
@@ -89,7 +89,7 @@ test('core/parse', main => {
             const root = parse(lex('-4/-2'));
             const walk = Array.from(root)
             t.deepEqual(walk, [
-                { operator: '/', precedence: 1 },
+                { operator: '/', precedence: 1, isParenthesized: null },
                 { value: -4 },
                 { value: -2 },
             ]);
@@ -99,7 +99,7 @@ test('core/parse', main => {
             const root = parse(lex('-1-2'));
             const walk = Array.from(root)
             t.deepEqual(walk, [
-                { operator: '-', precedence: 0 },
+                { operator: '-', precedence: 0, isParenthesized: null },
                 { value: -1 },
                 { value: 2 },
             ]);
@@ -109,8 +109,8 @@ test('core/parse', main => {
             const root = parse(lex('1 + 20 + 3.5'));
             const walk = Array.from(root)
             t.deepEqual(walk, [
-                { operator: '+', precedence: 0 },
-                { operator: '+', precedence: 0 },
+                { operator: '+', precedence: 0, isParenthesized: null },
+                { operator: '+', precedence: 0, isParenthesized: null },
                 { value: 1 },
                 { value: 20 },
                 { value: 3.5 }
@@ -121,10 +121,10 @@ test('core/parse', main => {
             const root = parse(lex('1 + 20 + 3.5 - 4 - 5'));
             const walk = Array.from(root);
             t.deepEqual(walk, [
-                { operator: '-', precedence: 0 },
-                { operator: '-', precedence: 0 },
-                { operator: '+', precedence: 0 },
-                { operator: '+', precedence: 0 },
+                { operator: '-', precedence: 0, isParenthesized: null },
+                { operator: '-', precedence: 0, isParenthesized: null },
+                { operator: '+', precedence: 0, isParenthesized: null },
+                { operator: '+', precedence: 0, isParenthesized: null },
                 { value: 1 },
                 { value: 20 },
                 { value: 3.5 },
@@ -137,8 +137,8 @@ test('core/parse', main => {
             const root = parse(lex('1 * 20 + 3.5'));
             const walk = Array.from(root);
             t.deepEqual(walk, [
-                { operator: '+', precedence: 0 },
-                { operator: '*', precedence: 1 },
+                { operator: '+', precedence: 0, isParenthesized: null },
+                { operator: '*', precedence: 1, isParenthesized: null },
                 { value: 1 },
                 { value: 20 },
                 { value: 3.5 }
@@ -149,9 +149,9 @@ test('core/parse', main => {
             const root = parse(lex('1 + 20 * 3.5'));
             const walk = Array.from(root);
             t.deepEqual(walk, [
-                { operator: '+', precedence: 0 },
+                { operator: '+', precedence: 0, isParenthesized: null },
                 { value: 1 },
-                { operator: '*', precedence: 1 },
+                { operator: '*', precedence: 1, isParenthesized: null },
                 { value: 20 },
                 { value: 3.5 }
             ]);
@@ -161,13 +161,13 @@ test('core/parse', main => {
             const root = parse(lex('1 + 20 * 3.5 - 4 / 5'));
             const walk = Array.from(root);
             t.deepEqual(walk, [
-                { operator: '-', precedence: 0 },
-                { operator: '+', precedence: 0 },
+                { operator: '-', precedence: 0, isParenthesized: null },
+                { operator: '+', precedence: 0, isParenthesized: null },
                 { value: 1 },
-                { operator: '*', precedence: 1 },
+                { operator: '*', precedence: 1, isParenthesized: null },
                 { value: 20 },
                 { value: 3.5 },
-                { operator: '/', precedence: 1 },
+                { operator: '/', precedence: 1, isParenthesized: null },
                 { value: 4 },
                 { value: 5 },
             ]);
@@ -177,9 +177,9 @@ test('core/parse', main => {
             const root = parse(lex('4 + 2 ^ 3'));
             const walk = Array.from(root);
             t.deepEqual(walk, [
-                { operator: '+', precedence: 0 },
+                { operator: '+', precedence: 0, isParenthesized: null },
                 { value: 4 },
-                { operator: '^', precedence: 2 },
+                { operator: '^', precedence: 2, isParenthesized: null },
                 { value: 2 },
                 { value: 3 }
             ]);
@@ -189,9 +189,9 @@ test('core/parse', main => {
             const root = parse(lex('4 * 2 ^ 3'));
             const walk = Array.from(root);
             t.deepEqual(walk, [
-                { operator: '*', precedence: 1 },
+                { operator: '*', precedence: 1, isParenthesized: null },
                 { value: 4 },
-                { operator: '^', precedence: 2 },
+                { operator: '^', precedence: 2, isParenthesized: null },
                 { value: 2 },
                 { value: 3 }
             ]);
@@ -201,9 +201,9 @@ test('core/parse', main => {
             const root = parse(lex('2 ^ 2 ^ 2 ^ 2'));
             const walk = Array.from(root);
             t.deepEqual(walk, [
-                { operator: '^', precedence: 2 },
-                { operator: '^', precedence: 2 },
-                { operator: '^', precedence: 2 },
+                { operator: '^', precedence: 2, isParenthesized: null },
+                { operator: '^', precedence: 2, isParenthesized: null },
+                { operator: '^', precedence: 2, isParenthesized: null },
                 { value: 2 },
                 { value: 2 },
                 { value: 2 },
@@ -218,9 +218,9 @@ test('core/parse', main => {
             const root = parse(lex('1 + (20 + 3.5)'));
             const walk = Array.from(root)
             t.deepEqual(walk, [
-                { operator: '+', precedence: 0 },
+                { operator: '+', precedence: 0, isParenthesized: null },
                 { value: 1 },
-                { operator: '+', precedence: 1 },
+                { operator: '+', precedence: 0, isParenthesized: true },
                 { value: 20 },
                 { value: 3.5 }
             ])
@@ -230,8 +230,8 @@ test('core/parse', main => {
             const root = parse(lex('(1 + 20) * 3.5'));
             const walk = Array.from(root)
             t.deepEqual(walk, [
-                { operator: '*', precedence: 1 },
-                { operator: '+', precedence: 1 },
+                { operator: '*', precedence: 1, isParenthesized: null },
+                { operator: '+', precedence: 0, isParenthesized: true },
                 { value: 1 },
                 { value: 20 },
                 { value: 3.5 }
@@ -242,11 +242,11 @@ test('core/parse', main => {
             const root = parse(lex('1 + (2 + (3 + 4))'));
             const walk = Array.from(root)
             t.deepEqual(walk, [
-                { operator: '+', precedence: 0 },
+                { operator: '+', precedence: 0, isParenthesized: null },
                 { value: 1 },
-                { operator: '+', precedence: 1 },
+                { operator: '+', precedence: 0, isParenthesized: true },
                 { value: 2 },
-                { operator: '+', precedence: 1 },
+                { operator: '+', precedence: 0, isParenthesized: true },
                 { value: 3 },
                 { value: 4 },
             ])
@@ -256,13 +256,13 @@ test('core/parse', main => {
             const root = parse(lex('1 + (20 + (3.5 - (4 - 5)))'));
             const walk = Array.from(root)
             t.deepEqual(walk, [
-                { operator: '+', precedence: 0 },
+                { operator: '+', precedence: 0, isParenthesized: null },
                 { value: 1 },
-                { operator: '+', precedence: 1 },
+                { operator: '+', precedence: 0, isParenthesized: true },
                 { value: 20 },
-                { operator: '-', precedence: 1 },
+                { operator: '-', precedence: 0, isParenthesized: true },
                 { value: 3.5 },
-                { operator: '-', precedence: 1 },
+                { operator: '-', precedence: 0, isParenthesized: true },
                 { value: 4 },
                 { value: 5 },
             ])
@@ -272,10 +272,10 @@ test('core/parse', main => {
             const root = parse(lex('0 + (1 + 20) * 3.5'));
             const walk = Array.from(root)
             t.deepEqual(walk, [
-                { operator: '+', precedence: 0 },
+                { operator: '+', precedence: 0, isParenthesized: null },
                 { value: 0 },
-                { operator: '*', precedence: 1 },
-                { operator: '+', precedence: 1 },
+                { operator: '*', precedence: 1, isParenthesized: null },
+                { operator: '+', precedence: 0, isParenthesized: true },
                 { value: 1 },
                 { value: 20 },
                 { value: 3.5 }
@@ -286,14 +286,14 @@ test('core/parse', main => {
             const root = parse(lex('1+(2*(3+(4-5))*6)'));
             const walk = Array.from(root)
             t.deepEqual(walk, [
-                { operator: '+', precedence: 0 },
+                { operator: '+', precedence: 0, isParenthesized: null },
                 { value: 1 },
-                { operator: '*', precedence: 2 },
-                { operator: '*', precedence: 1 },
+                { operator: '*', precedence: 1, isParenthesized: true },
+                { operator: '*', precedence: 1, isParenthesized: null },
                 { value: 2 },
-                { operator: '+', precedence: 1 },
+                { operator: '+', precedence: 0, isParenthesized: true },
                 { value: 3 },
-                { operator: '-', precedence: 1 },
+                { operator: '-', precedence: 0, isParenthesized: true },
                 { value: 4 },
                 { value: 5 },
                 { value: 6 },
@@ -304,11 +304,11 @@ test('core/parse', main => {
             const root = parse(lex('2 ^ ( 2 ^ ( 2 ^ 2 ))'));
             const walk = Array.from(root);
             t.deepEqual(walk, [
-                { operator: '^', precedence: 2 },
+                { operator: '^', precedence: 2, isParenthesized: null },
                 { value: 2 },
-                { operator: '^', precedence: 3 },
+                { operator: '^', precedence: 2, isParenthesized: true },
                 { value: 2 },
-                { operator: '^', precedence: 3 },
+                { operator: '^', precedence: 2, isParenthesized: true },
                 { value: 2 },
                 { value: 2 },
             ]);

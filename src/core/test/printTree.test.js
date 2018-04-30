@@ -57,7 +57,7 @@ test('core/printTree', main => {
         );
         t.equal(
             printTree(parse(lex('(1+4)/(6^10-4)(8/9(2+3))'))),
-            '(1+4)/(6^10-4)*(8/9*(2+3))'
+            '(1+4)/(6^10-4)*((8/9*(2+3))'
         );
         t.equal(
             printTree(parse(lex('(1+1)/(2+2)(3+3)'))),

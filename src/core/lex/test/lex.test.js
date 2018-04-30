@@ -47,6 +47,7 @@ test('core/lex', main => {
                 t.ok(token instanceof Token.Addition, 'should be an Addition');
                 t.equal(token.operator, '+');
                 t.equal(token.precedence, 0, 'should have the correct precedence');
+                t.equal(token.isParenthesized, null, 'should have the correct parenthesized flag');
                 t.end();
             });
             t.test('├── -', t => {
@@ -69,7 +70,7 @@ test('core/lex', main => {
                     const tokens = lex('1+-2');
                     t.equal(tokens.length, 3, 'should find 3 tokens');
                     t.deepEqual(tokens, [
-                        { value: 1}, { operator: '+', precedence: 0 },
+                        { value: 1}, { operator: '+', precedence: 0, isParenthesized: null },
                         { value: -2 }
                     ])
                     t.end();
@@ -78,7 +79,7 @@ test('core/lex', main => {
                     const tokens = lex('-1-2')
                     t.deepEqual(tokens, [
                         { value: -1 },
-                        { operator: '-', precedence: 0 },
+                        { operator: '-', precedence: 0, isParenthesized: null },
                         { value: 2 },
                     ]);
                     t.end();
@@ -87,10 +88,10 @@ test('core/lex', main => {
                     const tokens = lex('0*(-1+2)');
                     t.equal(tokens.length, 7, 'should find 9 tokens');
                     t.deepEqual(tokens, [
-                        { value: 0}, { operator: '*', precedence: 1 },
+                        { value: 0}, { operator: '*', precedence: 1, isParenthesized: null },
                         {}, 
                         { value: -1 },
-                        { operator: '+', precedence: 0 },
+                        { operator: '+', precedence: 0, isParenthesized: null },
                         { value: 2 },
                         {}
                     ])
@@ -105,6 +106,7 @@ test('core/lex', main => {
                     t.ok(token instanceof Token.Multiplication, 'should be a Multiplication');
                     t.equal(token.operator, '*');
                     t.equal(token.precedence, 1, 'should have the correct precedence');
+                    t.equal(token.isParenthesized, null, 'should have the correct parenthesized flag');
                     t.end();
                 });
                 t.test('├─── implicit multiplication with a number', t => {
@@ -112,10 +114,10 @@ test('core/lex', main => {
                     t.equal(tokens.length, 7, 'should add a Multiplication token');
                     t.deepEqual(tokens, [
                         { value: 1 },
-                        { operator: '*' , precedence: 1 },
+                        { operator: '*' , precedence: 1, isParenthesized: null },
                         {},
                         { value: 2 },
-                        { operator: '+' , precedence: 0 },
+                        { operator: '+' , precedence: 0, isParenthesized: null },
                         { value: 3 },
                         {}
                     ])
@@ -126,13 +128,13 @@ test('core/lex', main => {
                     t.deepEqual(tokens, [
                         {},
                         { value: 3 },
-                        { operator: '+' , precedence: 0 },
+                        { operator: '+' , precedence: 0, isParenthesized: null },
                         { value: 7 },
                         {},
-                        { operator: '*' , precedence: 1 },
+                        { operator: '*' , precedence: 1, isParenthesized: null },
                         {},
                         { value: 2 },
-                        { operator: '+' , precedence: 0 },
+                        { operator: '+' , precedence: 0, isParenthesized: null },
                         { value: 3 },
                         {}
                     ])
@@ -147,13 +149,14 @@ test('core/lex', main => {
                     t.ok(token instanceof Token.Division, 'should be a Division');
                     t.equal(token.operator, '/');
                     t.equal(token.precedence, 1, 'should have the correct precedence');
+                    t.equal(token.isParenthesized, null, 'should have the correct parenthesized flag');
                     t.end();
                 });
                 t.test('├─── negative division', t => {
                     const tokens = lex('-4/-2');
                     t.deepEqual(tokens, [
                         { value: -4 },
-                        { operator: '/', precedence: 1 },
+                        { operator: '/', precedence: 1, isParenthesized: null },
                         { value: -2 }
                     ]);
                     t.end();
@@ -167,6 +170,7 @@ test('core/lex', main => {
                     t.ok(token instanceof Token.Exponentiation, 'should be a Division');
                     t.equal(token.operator, '^');
                     t.equal(token.precedence, 2, 'should have the correct precedence');
+                    t.equal(token.isParenthesized, null, 'should have the correct parenthesized flag');
                     t.end();
                 });
             });
