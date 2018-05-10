@@ -39,6 +39,55 @@ test('core/lex', main => {
                 t.end();
             });
         });
+        t.test('├─ unary operators', t => {
+            t.test('├── square root', t => {
+                const [ token, _, number ] = lex(':sqrt(2)')
+                t.ok(token instanceof Token.UnaryOperation, 'is a unary operator')
+                t.ok(token instanceof Token.SquareRoot, 'is a square root operation')
+                t.ok(number instanceof Token._Number, 'is a number')
+                t.equal(token.name, 'sqrt')
+                t.end();
+            });
+            t.test('├── sin', t => {
+                const [ token, _, number ] = lex(':sin(2)')
+                t.ok(token instanceof Token.UnaryOperation, 'is a unary operator')
+                t.ok(token instanceof Token.Sin, 'is a sin operation')
+                t.ok(number instanceof Token._Number, 'is a number')
+                t.equal(token.name, 'sin')
+                t.end();
+            });
+            t.test('├── cos', t => {
+                const [ token, _, number ] = lex(':cos(2)')
+                t.ok(token instanceof Token.UnaryOperation, 'is a unary operator')
+                t.ok(token instanceof Token.Cos, 'is a cos operation')
+                t.ok(number instanceof Token._Number, 'is a number')
+                t.equal(token.name, 'cos')
+                t.end();
+            });
+            t.test('├── tan', t => {
+                const [ token, _, number ] = lex(':tan(2)')
+                t.ok(token instanceof Token.UnaryOperation, 'is a unary operator')
+                t.ok(token instanceof Token.Tan, 'is a tan operation')
+                t.ok(number instanceof Token._Number, 'is a number')
+                t.equal(token.name, 'tan')
+                t.end();
+            });
+            t.test('├── errors', t => {
+                t.throws(
+                    () => lex(':xyz(2)')
+                , CharError.InvalidOperator, 'invalid keyword');
+                t.throws(
+                    () => lex(':sqrt5')
+                , CharError.InvalidOperator, 'missing parentheses');
+                t.throws(
+                    () => lex('5:sqrt')
+                , CharError.InvalidNumber, 'missing parentheses');
+                t.throws(
+                    () => lex('25bc')
+                , CharError.InvalidNumber, 'mixed digits and letters');
+                t.end();
+            });
+        });
         t.test('├─ binary operators', t => {
             t.test('├── +', t => {
                 const [ token ] = lex('+');
