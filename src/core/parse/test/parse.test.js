@@ -18,8 +18,79 @@ test('core/parse', main => {
         t.equal(root.value.value, -1);
         t.end();
     });
-
-    main.test('├ simple expressions', t => {
+    main.test('├─ simple expressions with unary operations', t => {
+        t.test('├── sqrt', t => {
+            const tokens = lex(':sqrt(1)');
+            const root = parse(tokens);
+            t.ok(root.value instanceof Token.SquareRoot, 'root is a square root operation');
+            t.ok(root.left.value instanceof Token._Number, 'left is a number');
+            t.end();
+        })
+        t.test('├── sin', t => {
+            const tokens = lex(':sin(1)');
+            const root = parse(tokens);
+            t.ok(root.value instanceof Token.Sin, 'root is a sin operation');
+            t.ok(root.left.value instanceof Token._Number, 'left is a number');
+            t.end();
+        })
+        t.test('├── cos', t => {
+            const tokens = lex(':cos(1)');
+            const root = parse(tokens);
+            t.ok(root.value instanceof Token.Cos, 'root is a cos operation');
+            t.ok(root.left.value instanceof Token._Number, 'left is a number');
+            t.end();
+        })
+        t.test('├── tan', t => {
+            const tokens = lex(':tan(1)');
+            const root = parse(tokens);
+            t.ok(root.value instanceof Token.Tan, 'root is a tan operation');
+            t.ok(root.left.value instanceof Token._Number, 'left is a number');
+            t.end();
+        })
+    })
+    main.test('├ more complex unary operations', t => {
+        t.test('├─ cos(a+b)', t => {
+            const tokens = lex(':cos(1+2)');
+            const root = parse(tokens);
+            const walk = Array.from(root.walk());
+            t.deepEqual(walk, [
+                { name: 'cos' },
+                { operator: '+', precedence: 0, isParenthesized: true },
+                { value: 1 },
+                { value: 2 }
+            ]);
+            t.end();
+        });
+        t.test('├─ a + b * sqrt(a)', t => {
+            const tokens = lex('1 + 2 * :sqrt(5)');
+            const root = parse(tokens);
+            const walk = Array.from(root.walk());
+            t.deepEqual(walk, [
+                { operator: '+', precedence: 0, isParenthesized: null },
+                { value: 1 },
+                { operator: '*', precedence: 1, isParenthesized: null },
+                { value: 2 },
+                { name: 'sqrt' },
+                { value: 5 },
+            ]);
+            t.end();
+        });
+        t.test('├─ sqrt(a) b + c', t => {
+            const tokens = lex(':sqrt(50) 20 + 40');
+            const root = parse(tokens);
+            const walk = Array.from(root.walk());
+            t.deepEqual(walk, [
+                { operator: '+', precedence: 0, isParenthesized: null },
+                { operator: '*', precedence: 1, isParenthesized: null },
+                { name: 'sqrt' },
+                { value: 50 },
+                { value: 20 },
+                { value: 40 }
+            ]);
+            t.end();
+        });
+    })
+    main.test('├ simple binary expressions', t => {
         t.test('├─ addition', t => {
             const tokens = lex('10 + 2.5');
             const root = parse(tokens);

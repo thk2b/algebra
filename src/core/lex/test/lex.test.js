@@ -72,6 +72,31 @@ test('core/lex', main => {
                 t.equal(token.name, 'tan')
                 t.end();
             });
+            t.test('├── implicit multiplication', t => {
+                t.test('├─── sqrt(a)b', t => {
+                    const tokens = lex(':sqrt(5)2');
+                    t.deepEquals(tokens, [
+                        { name: 'sqrt' },
+                        {}, { value: 5 }, {},
+                        { operator: '*', precedence: 1, isParenthesized: null },
+                        { value: 2 }
+                    ]);
+                    t.end();
+                });
+                t.test('├─── b sqrt(a)', t => {
+                    const tokens = lex('2:sqrt(5)');
+                    t.deepEquals(tokens, [
+                        { value: 2 },
+                        { operator: '*', precedence: 1, isParenthesized: null},
+                        { name: 'sqrt' },
+                        {}, { value: 5 }, {}
+                    ]);
+                    t.end();
+                });
+            });
+            t.test('├── negative numbers', t => {
+                t.end();
+            });
             t.test('├── errors', t => {
                 t.throws(
                     () => lex(':xyz(2)')
@@ -80,11 +105,8 @@ test('core/lex', main => {
                     () => lex(':sqrt5')
                 , CharError.InvalidOperator, 'missing parentheses');
                 t.throws(
-                    () => lex('5:sqrt')
-                , CharError.InvalidNumber, 'missing parentheses');
-                t.throws(
                     () => lex('25bc')
-                , CharError.InvalidNumber, 'mixed digits and letters');
+                , CharError.UnknownCharacter, 'mixed digits and letters');
                 t.end();
             });
         });

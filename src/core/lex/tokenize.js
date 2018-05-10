@@ -100,11 +100,15 @@ const patterns = {
         };
     },
     '\^[a-zA-Z]+$': (character, tokens, digits, operator) => {
-        if(digits.length) throw new CharError.InvalidNumber(digits.concat(character).join(''));
         if(!operator.length) throw new CharError.UnknownCharacter(character);
-        return {
-            tokens, digits, operator: operator.concat(character)
-        };
+        return digits.length 
+            ? {
+                tokens: tokens.concat(tokenizeDigits(digits)), digits: [], operator: operator.concat(character)
+            }
+            : {
+                tokens, digits, operator: operator.concat(character)
+            }
+        ;
     },
     '\\+': createCharacterTokenizer(Token.Addition),
     '\\-': createCharacterTokenizer(Token.Substraction),
