@@ -25,7 +25,7 @@ function tokenizeDigits(digits){
     return new Token._Number(parseFloat(digits.join('')));
 };
 
-function createNonDigitTokenizer(TokenConstructor){
+function createCharacterTokenizer(TokenConstructor){
     return function(char, tokens, digits){
         const token = new TokenConstructor();
         return ({
@@ -59,13 +59,13 @@ const patterns = {
     '\\d': (digit, tokens, digits) => ({
         tokens, digits: digits.concat(digit)
     }),
-    '\\+': createNonDigitTokenizer(Token.Addition),
-    '\\-': createNonDigitTokenizer(Token.Substraction),
-    '\\/': createNonDigitTokenizer(Token.Division),
-    '\\*': createNonDigitTokenizer(Token.Multiplication),
-    '\\^': createNonDigitTokenizer(Token.Exponentiation),
-    '\\(': createNonDigitTokenizer(Token.OpenParenthesis),
-    '\\)': createNonDigitTokenizer(Token.CloseParenthesis),
+    '\\+': createCharacterTokenizer(Token.Addition),
+    '\\-': createCharacterTokenizer(Token.Substraction),
+    '\\/': createCharacterTokenizer(Token.Division),
+    '\\*': createCharacterTokenizer(Token.Multiplication),
+    '\\^': createCharacterTokenizer(Token.Exponentiation),
+    '\\(': createCharacterTokenizer(Token.OpenParenthesis),
+    '\\)': createCharacterTokenizer(Token.CloseParenthesis),
     '.': (char) => {
         throw new CharError.UnknownCharacter(char);
     },
