@@ -61,7 +61,7 @@ export default function simplifyTree(root){
     const leftToken = leftNode && leftNode.value;
     const rightToken = rightNode && rightNode.value;
 
-    return (rightToken instanceof Token._Number) && (leftToken instanceof Token._Number)
+    return ((rightToken instanceof Token._Number ) || rightToken === null) && (leftToken instanceof Token._Number)
         ? calculateOrSimplifyTree(root, leftToken, rightToken)
         : simplifyDivision(token, leftNode, rightNode)
     ;

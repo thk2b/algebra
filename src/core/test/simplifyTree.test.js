@@ -34,6 +34,14 @@ test('core/simplifyTree', main => {
             ]);
             t.end();
         });
+        t.test('├─ unary operator', t => {
+            const node = simplifyTree(parse(lex(':cos(20)')));
+            t.ok(node.value instanceof Token._Number);
+            t.deepEqual(Array.from(node.walk()), [
+                { value: 0.408 }
+            ]);
+            t.end();
+        });
         t.test('├─ division by 0', t => {
             t.throws(
                 () => simplifyTree(parse(lex('20/0'))),
