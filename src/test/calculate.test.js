@@ -52,6 +52,11 @@ test('/calculate', main => {
             t.equal(calculate('2 ^ 2'), 4);
             t.end();
         });
+        t.test('├─ with :sqrt', t => {
+            t.equal(calculate(':sqrt(100)'), 10);
+            t.equal(calculate(':sqrt(3)'), 1.732);
+            t.end();
+        });
         t.test('├─ result should always be in the same precision as the most precise input', t => {
             t.equal(calculate('1.11111 + 0'), 1.11111)
             t.end()
@@ -97,6 +102,8 @@ test('/calculate', main => {
         t.equal(calculate('5(10^2)(12-9)'), 1500);
         t.equal(calculate('2/4/8'), 0.063);
         t.equal(calculate('2/(4/8)'), 4);
+        t.equal(calculate(':sqrt(10^2)+1'), 11);
+        t.equal(calculate('(10+2-5)*10:sqrt(10^2)+1'), 701);
         t.end();
     });
     main.test('├ errors', t => {
