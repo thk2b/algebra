@@ -82,11 +82,10 @@ export default function simplifyTree(root){
  */
 function calculateOrSimplifyTree(root, leftToken, rightToken){
     const operationToken = root.value;
-    let value;
-    const l = leftToken.value;
-    const r = rightToken.value;
 
     if(operationToken instanceof Token.Division){
+        const l = leftToken.value;
+        const r = rightToken.value;
         if(r === 0){
             throw new Errors.Math.DivisionByZero(operationToken);
         };
