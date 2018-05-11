@@ -49,9 +49,6 @@ const { min, max, pow } = Math;
  *   nodes are Token._Number and they have no common factor (Base case 2).
  */
 export default function simplifyTree(root){
-    if(!(root instanceof Node)){
-        throw new TypeError(`Expected a Node in calculateTree: got ${root}`);
-    };
     const token = root.value;
     
     /* Base case 1: return a Node containing a Token._Number */
