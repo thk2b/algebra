@@ -435,6 +435,22 @@ test('core/parse', main => {
                 t.end();
             });
         });
+        t.test('├─ unary operations', t => {
+            t.test('├── no value', t => {
+                t.throws(
+                    () => parse(lex(':sqrt()')),
+                    _SyntaxError.EmptyExpression
+                );
+                t.end();
+            });
+            t.test('├── no closing parenthesis', t => {
+                t.throws(
+                    () => parse(lex(':sqrt(5')),
+                    _SyntaxError.UnmatchedParenthesis
+                );
+                t.end();
+            });
+        });
         t.test('├─ parentheses', t => {
             t.test('├── no closing parenthesis ', t => {
                 t.throws(
