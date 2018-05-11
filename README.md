@@ -3,10 +3,22 @@ A javascript algebra engine
 ```js
 import { calculate, simplify } from 'algebra'
 calculate('1+1') // => 2
+calculate('2*2') // => 4
+calculate('2(2+2)') // => 8, with implicit multiplication
 calculate('5(10^2)(12-9)') // => 1500
+calculate('10:sqrt(25)') // => 50
 
 simplify('16/24') // => '2/3'
 ```
+## Binary operators
+
+Suported binary operators are `+, -, *, /`.
+
+## Unary operators
+
+Unary operators must be preceded by the `:` character.
+Suported unary operators are `:sqrt, :sin, :cos, :tan`.
+
 # Motivation
 The goal of this project is to parse and solve algebraic equations.
 For instance, given `2x-5=10`, output `x=15/2`.
