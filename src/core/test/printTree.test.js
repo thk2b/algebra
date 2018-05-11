@@ -32,6 +32,10 @@ test('core/printTree', main => {
             printTree(parse(lex('20^1'))),
             '20^1'
         );
+        t.equal(
+            printTree(parse(lex(':sqrt(15)'))),
+            'sqrt(15)'
+        );
         t.end();
     });
     main.test('├ tree', t => {
@@ -62,6 +66,18 @@ test('core/printTree', main => {
         t.equal(
             printTree(parse(lex('(1+1)/(2+2)(3+3)'))),
             '(1+1)/(2+2)*(3+3)'
+        );
+        t.equal(
+            printTree(parse(lex(':sqrt(5*5)'))),
+            'sqrt(5*5)'
+        );
+        t.equal(
+            printTree(parse(lex(':sqrt(5*5)+2'))),
+            'sqrt(5*5)+2'
+        );
+        t.equal(
+            printTree(parse(lex('1:sqrt(5*5)+2'))),
+            '1*sqrt(5*5)+2'
         );
         t.end();
     });

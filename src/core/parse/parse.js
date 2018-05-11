@@ -88,12 +88,28 @@ const expectedTokens = [
             };
             leaf.add(node);
             return { root, leaf: root };
-        }
+        };
+        return false;
+    },
+    function unaryOperation(token){
+        if(token instanceof Token.UnaryOperation) return function parseUnaryOperation(root, leaf){
+            console.log({ token, root, leaf})
+            const node = new Node(token);
+            if(root === null) {
+                return {
+                    root: node, leaf: node
+                };
+            };
+            leaf.add(node);
+            return {
+                root, leaf: node
+            };
+        };
         return false;
     },
     function binaryOperation(token){
         if(token instanceof Token.BinaryOperation) return function parseBinaryOperation(root, leaf){
-            if(root === null) throw new _SyntaxError.MissingNumber(token)
+            if(root === null) throw new _SyntaxError.MissingNumber(token);
             if((root.value instanceof Token.BinaryOperation) &&
                 (!root.value.isParenthesized && (token.precedence > root.value.precedence))
             ){

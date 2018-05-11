@@ -41,8 +41,36 @@ test('core/calculateTree', main => {
             });
             t.end();
         });
+        t.test('├─ with :sqrt', t => {
+            const node = calculateTree(parse(lex(':sqrt(25)'))); 
+            t.ok(node instanceof Node);
+            t.ok(node.value instanceof Token._Number);
+            t.deepEqual(node.value, { value: 5 });
+            t.end();
+        });
+        t.test('├─ with :cos', t => {
+            const node = calculateTree(parse(lex(':cos(25)'))); 
+            t.ok(node instanceof Node);
+            t.ok(node.value instanceof Token._Number);
+            t.deepEqual(node.value, { value: 0.991 });
+            t.end();
+        });
+        t.test('├─ with :sin', t => {
+            const node = calculateTree(parse(lex(':sin(25)'))); 
+            t.ok(node instanceof Node);
+            t.ok(node.value instanceof Token._Number);
+            t.deepEqual(node.value, { value: -0.132 });
+            t.end();
+        });
+        t.test('├─ with :tan', t => {
+            const node = calculateTree(parse(lex(':tan(25)'))); 
+            t.ok(node instanceof Node);
+            t.ok(node.value instanceof Token._Number);
+            t.deepEqual(node.value, { value: -0.134 });
+            t.end();
+        });
         t.test('├─ nested operation', t => {
-            const node = calculateTree(parse(lex('10 / 2 + 5'))); 
+            const node = calculateTree(parse(lex('10 / 2 + :sqrt(25)'))); 
             t.ok(node instanceof Node);
             t.ok(node.value instanceof Token._Number);
             t.deepEqual(node.value, { value: 10 });

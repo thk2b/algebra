@@ -21,8 +21,15 @@ export class InvalidNumber extends CharacterError {
     };
 };
 
+export class InvalidOperator extends CharacterError {
+    constructor(char){
+        super(char, 'Invalid operator');
+    };
+};
+
 export default {
     CharacterError,
     UnknownCharacter,
-    InvalidNumber
+    InvalidNumber,
+    InvalidOperator
 };

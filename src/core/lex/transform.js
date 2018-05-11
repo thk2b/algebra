@@ -66,11 +66,20 @@ const transformations = [
     function implicitMultiplication(tokens, token, index){
         if ((token instanceof Token._Number) || (token instanceof Token.CloseParenthesis)){
             const next = tokens[index + 1];
-            if(next instanceof Token.OpenParenthesis) {
+            if((next instanceof Token.OpenParenthesis) || (next instanceof Token.UnaryOperation) || (next instanceof Token._Number)) {
                 return [
                 ...tokens.slice(0, index + 1),
                 new Token.Multiplication(),
                 ...tokens.slice(index + 1)
+                ];
+            }
+        } else if (token instanceof Token.UnaryOperation){
+            const next = tokens[index + 1];
+            if((next instanceof Token.UnaryOperation) || (next instanceof Token._Number)){
+                return [
+                    ...tokens.slice(0, index + 1),
+                    new Token.Multiplication(),
+                    ...tokens.slice(index + 1)
                 ];
             };
         };

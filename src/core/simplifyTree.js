@@ -5,8 +5,10 @@ import options from '../options';
 import { Token } from './lex';
 import { Node } from './parse';
 import Errors from '../Errors';
+import calculateTree from './calculateTree'
 
 const { min, max, pow } = Math;
+
 
 /**
  * simplifyTree
@@ -62,7 +64,7 @@ export default function simplifyTree(root){
     const rightToken = rightNode.value;
 
     return (rightToken instanceof Token._Number) && (leftToken instanceof Token._Number)
-        ? calculateTree(token, leftToken, rightToken)
+        ? calculateOrSimplifyTree(root, leftToken, rightToken)
         : simplifyDivision(token, leftNode, rightNode)
     ;
 };
@@ -80,7 +82,8 @@ export default function simplifyTree(root){
  * @param {Token} rightToken 
  * @returns {Node}
  */
-function calculateTree(operationToken, leftToken, rightToken){
+function calculateOrSimplifyTree(root, leftToken, rightToken){
+    const operationToken = root.value;
     let value;
     const l = leftToken.value;
     const r = rightToken.value;
@@ -101,23 +104,7 @@ function calculateTree(operationToken, leftToken, rightToken){
                 new Node(new Token._Number(newR))
             )
         ;
-    } else {
-        const places = max(precision(r), precision(l));
-        const value = operationToken instanceof Token.Addition
-            ? round(l + r, places)
-            : operationToken instanceof Token.Substraction
-            ? round(l - r, places)
-            : operationToken instanceof Token.Multiplication
-            ? round(l * r, places)
-            : operationToken instanceof Token.Exponentiation
-            ? round(pow(l, r), places)
-            : null
-        ;
-        if(value === null){
-            throw new TypeError('Cannot calculate non-binary operation');
-        };
-        return new Node(new Token._Number(value));
-    };
+    } else return calculateTree(root)
 };
 
 /**

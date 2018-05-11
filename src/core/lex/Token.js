@@ -7,6 +7,36 @@ class _Number {
     };
 };
 
+class UnaryOperation {
+    constructor(name){
+        this.name = name;
+    };
+    print(){
+        return this.name
+    }
+};
+
+class SquareRoot extends UnaryOperation {
+    constructor(){
+        super('sqrt');
+    };
+};
+class Sin extends UnaryOperation {
+    constructor(){
+        super('sin');
+    };
+};
+class Cos extends UnaryOperation {
+    constructor(){
+        super('cos');
+    };
+};
+class Tan extends UnaryOperation {
+    constructor(){
+        super('tan');
+    };
+};
+
 class BinaryOperation {
     constructor(operator, precedence){
         this.operator = operator;
@@ -51,7 +81,9 @@ class CloseParenthesis {
 
 export default {
     _Number,
+    UnaryOperation,
+        SquareRoot, Sin, Cos, Tan,
     BinaryOperation,
-    Addition, Substraction, Division, Multiplication, Exponentiation,
+        Addition, Substraction, Division, Multiplication, Exponentiation,
     OpenParenthesis, CloseParenthesis,
 };
