@@ -23,12 +23,13 @@ Suported unary operators are `:sqrt, :sin, :cos, :tan`.
 The goal of this project is to parse and solve algebraic equations.
 For instance, given `2x-5=10`, output `x=15/2`.
 
+The output should be correct with regards to the rules of algebra. For instance, the order of operations must be respected. 
+
 - Why not use `eval`?
 
-  Similar beahviour could be achieved by simply using eval. But that would:
-  - be too easy
-  - be incredibly boring
-  - prevent implementing more complex behaviours, such as implicit multiplication, exponentiation with the '^' sign, fraction reducing, algebraic variables, etc...
+  Similar beahviour could be achieved by simply using `eval`. But that would
+  - be too easy and incredibly boring
+  - prevent implementing more complex behaviours, such as implicit multiplication,fraction reducing, algebraic variables, as well as custom operators such as exponentiation with the '^' sign.
 
 # Implementation
 The code is written in a functional style. A previous imperative version of the code is available unser the `imperative` branch, though the algorithm is the same.
