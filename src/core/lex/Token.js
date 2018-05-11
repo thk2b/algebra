@@ -11,6 +11,9 @@ class UnaryOperation {
     constructor(name){
         this.name = name;
     };
+    print(){
+        return this.name
+    }
 };
 
 class SquareRoot extends UnaryOperation {
