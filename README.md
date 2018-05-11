@@ -1,5 +1,10 @@
+[Live demo](https://thk2b.github.io/algebra-site/)
+[Demo repository](https://github.com/thk2b/algebra-site)
+[NPM](https://www.npmjs.com/package/@thk2b/algebra)
+
 # algebra
 A javascript algebra engine
+
 ```js
 import { calculate, simplify } from 'algebra'
 calculate('1+1') // => 2
