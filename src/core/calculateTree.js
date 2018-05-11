@@ -5,7 +5,7 @@ import { Token } from './lex';
 import { Node } from './parse';
 import Errors from '../Errors';
 import { SIGBREAK } from 'constants';
-const { min, max, pow, sqrt } = Math;
+const { min, max, pow, sqrt, cos, sin, tan } = Math;
 
 /**
  * Calculates the result of an expression.
@@ -39,9 +39,6 @@ export default function calculateTree(root){
             case Token.Exponentiation:
                 result = round(pow(l, r), max(precision(l), precision(r)));
                 break;
-            case Token.SquareRoot:
-                result = round(sqrt());
-                break;
             default:
                 throw new TypeError(`Invalid operand ${token.operator}`);
         };
@@ -53,6 +50,16 @@ export default function calculateTree(root){
             case Token.SquareRoot:
                 result = round(sqrt(value), max(precision(value), options.precision));
                 break;
+            case Token.Cos:
+                result = round(cos(value), max(precision(value), options.precision));
+                break;
+            case Token.Sin:
+                result = round(sin(value), max(precision(value), options.precision));
+                break;
+            case Token.Tan:
+                result = round(tan(value), max(precision(value), options.precision));
+                break;
+                
             default:
                 throw new TypeError(`Invalid operand ${token.name}`);
         };
