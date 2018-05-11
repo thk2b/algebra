@@ -58,8 +58,8 @@ export default function simplifyTree(root){
     /* Base case 2: return a Node containing a Token.Division in lowest terms or a Token._Number*/
     const leftNode = simplifyTree(root.left);
     const rightNode = simplifyTree(root.right);
-    const leftToken = leftNode.value;
-    const rightToken = rightNode.value;
+    const leftToken = leftNode && leftNode.value;
+    const rightToken = rightNode && rightNode.value;
 
     return (rightToken instanceof Token._Number) && (leftToken instanceof Token._Number)
         ? calculateOrSimplifyTree(root, leftToken, rightToken)
