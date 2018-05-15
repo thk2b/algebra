@@ -2,7 +2,9 @@
 
 [Demo repository](https://github.com/thk2b/algebra-site)
 
-[NPM](https://www.npmjs.com/package/@thk2b/algebra)
+```
+npm install --save @thk2b/algebra
+```
 
 # algebra
 A javascript algebra engine
